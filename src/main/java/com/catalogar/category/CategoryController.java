@@ -1,5 +1,6 @@
 package com.catalogar.category;
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +35,7 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<Category> create(
-            @RequestBody Category category
+            @Valid @RequestBody NewCategoryRequest category
     ) {
         Category newCategory = categoryService.create(category);
 

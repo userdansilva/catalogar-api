@@ -22,8 +22,14 @@ public class CategoryService {
         return categoryRepository.findById(id);
     }
 
-    public Category create(Category category) {
-        return categoryRepository.save(category);
+    public Category create(NewCategoryRequest category) {
+        Category newCategory = new Category();
+
+        newCategory.setName(category.name());
+        newCategory.setColor(category.color());
+        newCategory.setBackgroundColor(category.backgroundColor());
+
+        return categoryRepository.save(newCategory);
     }
 
     public Category update(UUID id, Category  category) {
