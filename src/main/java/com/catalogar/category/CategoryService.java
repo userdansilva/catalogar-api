@@ -3,7 +3,6 @@ package com.catalogar.category;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -18,8 +17,11 @@ public class CategoryService {
         return categoryRepository.findAll();
     }
 
-    public Optional<Category> getById(UUID id) {
-        return categoryRepository.findById(id);
+    public Category getById(UUID id) {
+        return categoryRepository
+                .findById(id)
+                .orElseThrow(() -> new IllegalStateException(
+                        "Category with id: " + id + "does not exists"));
     }
 
     public Category create(NewCategoryRequest category) {

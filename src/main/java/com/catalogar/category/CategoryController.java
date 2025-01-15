@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -25,10 +24,10 @@ public class CategoryController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Optional<Category>> getById(
+    public ResponseEntity<Category> getById(
             @PathVariable("id") UUID id
     ) {
-        Optional<Category> category = categoryService.getById(id);
+        Category category = categoryService.getById(id);
 
         return ResponseEntity.ok().body(category);
     }
