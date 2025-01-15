@@ -1,5 +1,6 @@
 package com.catalogar.category;
 
+import com.catalogar.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,8 +21,8 @@ public class CategoryService {
     public Category getById(UUID id) {
         return categoryRepository
                 .findById(id)
-                .orElseThrow(() -> new IllegalStateException(
-                        "Category with id: " + id + "does not exists"));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Category with id: " + id + " does not exists"));
     }
 
     public Category create(NewCategoryRequest category) {
