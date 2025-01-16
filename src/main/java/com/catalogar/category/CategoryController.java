@@ -1,7 +1,10 @@
 package com.catalogar.category;
 
+import com.catalogar.exception.BadRequestException;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,8 +37,18 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<Category> create(
-            @Valid @RequestBody NewCategoryRequest category
+            @Valid @RequestBody NewCategoryRequest category,
+            BindingResult bindingResult
     ) {
+        if (bindingResult.hasErrors()) {
+            List<ObjectError> errors = bindingResult.getAllErrors();
+
+            throw new BadRequestException(
+                    "Requisição inválida",
+                    bindingResult.getAllErrors()
+            );
+        }
+
         Category newCategory = categoryService.create(category);
 
         return ResponseEntity.ok().body(newCategory);

@@ -28,6 +28,8 @@ public class CategoryService {
     public Category create(NewCategoryRequest category) {
         Category newCategory = new Category();
 
+
+
         newCategory.setName(category.name());
         newCategory.setColor(category.color());
         newCategory.setBackgroundColor(category.backgroundColor());

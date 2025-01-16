@@ -31,6 +31,22 @@ public class DefaultExceptionHandler {
         );
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ApiError> handle(
+            BadRequestException e,
+            HttpServletRequest httpServletRequest
+    ) {
+        ApiError apiError = new ApiError(
+                httpServletRequest.getRequestURI(),
+                e.getMessage(),
+                HttpStatus.BAD_REQUEST.value(),
+                ZonedDateTime.now(),
+                e.getErrorMessages()
+        );
+
+        return new ResponseEntity<ApiError>(apiError, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handle(
             Exception e,
