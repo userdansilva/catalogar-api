@@ -1,10 +1,9 @@
 package com.catalogar.category;
 
-import com.catalogar.exception.BadRequestException;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,27 +36,18 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<Category> create(
-            @Valid @RequestBody NewCategoryRequest category,
-            BindingResult bindingResult
+            @Valid @RequestBody NewCategoryRequest category
     ) {
-        if (bindingResult.hasErrors()) {
-            List<ObjectError> errors = bindingResult.getAllErrors();
-
-            throw new BadRequestException(
-                    "Requisição inválida",
-                    bindingResult.getAllErrors()
-            );
-        }
-
         Category newCategory = categoryService.create(category);
 
-        return ResponseEntity.ok().body(newCategory);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newCategory);
     }
 
     @PutMapping("{id}")
     public ResponseEntity<Category> update(
             @PathVariable UUID id,
-            @RequestBody Category category
+            @RequestBody Category category,
+            BindingResult bindingResult
     ) {
         Category updatedCategory = categoryService.update(id, category);
 

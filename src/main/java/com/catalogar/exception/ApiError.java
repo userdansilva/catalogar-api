@@ -7,7 +7,7 @@ public record ApiError(
         String path,
         String message,
         int statusCode,
-        ZonedDateTime zonedDateTime,
-        List<String> errors
+        ZonedDateTime timestamp,
+        List<ValidationError> errors
 ) {
 }

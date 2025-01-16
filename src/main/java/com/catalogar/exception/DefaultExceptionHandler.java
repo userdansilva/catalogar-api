@@ -3,6 +3,7 @@ package com.catalogar.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -31,20 +32,30 @@ public class DefaultExceptionHandler {
         );
     }
 
-    @ExceptionHandler(BadRequestException.class)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiError> handle(
-            BadRequestException e,
+            MethodArgumentNotValidException e,
             HttpServletRequest httpServletRequest
     ) {
+        List<ValidationError> errors = e.getFieldErrors().stream()
+                .map(error -> new ValidationError(
+                        error.getField(),
+                        error.getDefaultMessage()
+                ))
+                .toList();
+
         ApiError apiError = new ApiError(
                 httpServletRequest.getRequestURI(),
-                e.getMessage(),
+                "Ops! Alguns dados não foram aceitos",
                 HttpStatus.BAD_REQUEST.value(),
                 ZonedDateTime.now(),
-                e.getErrorMessages()
+                errors
         );
 
-        return new ResponseEntity<ApiError>(apiError, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<ApiError>(
+                apiError,
+                HttpStatus.BAD_REQUEST
+        );
     }
 
     @ExceptionHandler(Exception.class)
@@ -52,6 +63,8 @@ public class DefaultExceptionHandler {
             Exception e,
             HttpServletRequest httpServletRequest
     ) {
+        System.out.println(e.getClass().getSimpleName());
+
         ApiError apiError = new ApiError(
                 httpServletRequest.getRequestURI(),
                 e.getMessage(),
