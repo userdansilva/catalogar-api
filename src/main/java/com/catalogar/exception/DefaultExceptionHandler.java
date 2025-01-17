@@ -63,8 +63,6 @@ public class DefaultExceptionHandler {
             Exception e,
             HttpServletRequest httpServletRequest
     ) {
-        System.out.println(e.getClass().getSimpleName());
-
         ApiError apiError = new ApiError(
                 httpServletRequest.getRequestURI(),
                 e.getMessage(),

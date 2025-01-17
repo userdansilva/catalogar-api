@@ -1,10 +1,10 @@
 package com.catalogar.category;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -16,6 +16,12 @@ public class Category {
     private String name;
     private String color;
     private String backgroundColor;
+    @CreatedDate
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+    @LastModifiedDate
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
 
     public Category() {
     }
@@ -59,6 +65,14 @@ public class Category {
         this.backgroundColor = backgroundColor;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
@@ -69,15 +83,5 @@ public class Category {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, color, backgroundColor);
-    }
-
-    @Override
-    public String toString() {
-        return "Category{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", color='" + color + '\'' +
-                ", backgroundColor='" + backgroundColor + '\'' +
-                '}';
     }
 }

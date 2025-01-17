@@ -50,12 +50,4 @@ public class Product {
     public int hashCode() {
         return Objects.hash(id, name);
     }
-
-    @Override
-    public String toString() {
-        return "Product{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
-    }
 }
