@@ -36,22 +36,22 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<Category> create(
-            @Valid @RequestBody NewCategoryRequest category
+            @Valid @RequestBody CategoryRequest categoryRequest
     ) {
-        Category newCategory = categoryService.create(category);
+        Category category = categoryService.create(categoryRequest);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(newCategory);
+        return ResponseEntity.status(HttpStatus.CREATED).body(category);
     }
 
     @PutMapping("{id}")
     public ResponseEntity<Category> update(
             @PathVariable UUID id,
-            @RequestBody Category category,
+            @RequestBody CategoryRequest categoryRequest,
             BindingResult bindingResult
     ) {
-        Category updatedCategory = categoryService.update(id, category);
+        Category category = categoryService.update(id, categoryRequest);
 
-        return ResponseEntity.ok().body(updatedCategory);
+        return ResponseEntity.ok().body(category);
     }
 
     @DeleteMapping("{id}")

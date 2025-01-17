@@ -58,6 +58,22 @@ public class DefaultExceptionHandler {
         );
     }
 
+    @ExceptionHandler(UniqueFieldConflictException.class)
+    public ResponseEntity<ApiError> handle(
+            UniqueFieldConflictException e,
+            HttpServletRequest httpServletRequest
+    ) {
+        ApiError apiError = new ApiError(
+                httpServletRequest.getRequestURI(),
+                e.getMessage(),
+                HttpStatus.CONFLICT.value(),
+                ZonedDateTime.now(),
+                List.of()
+        );
+
+        return new ResponseEntity<ApiError>(apiError, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handle(
             Exception e,

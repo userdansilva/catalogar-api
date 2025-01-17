@@ -3,12 +3,14 @@ package com.catalogar.category;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -28,6 +30,12 @@ public class Category {
 
     public Category(UUID id, String name, String color, String backgroundColor) {
         this.id = id;
+        this.name = name;
+        this.color = color;
+        this.backgroundColor = backgroundColor;
+    }
+
+    public Category(String name, String color, String backgroundColor) {
         this.name = name;
         this.color = color;
         this.backgroundColor = backgroundColor;

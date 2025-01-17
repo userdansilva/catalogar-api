@@ -1,6 +1,7 @@
 package com.catalogar.category;
 
 import com.catalogar.exception.ResourceNotFoundException;
+import com.catalogar.exception.UniqueFieldConflictException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,31 +23,51 @@ public class CategoryService {
         return categoryRepository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Category with id: " + id + " does not exists"));
+                        "Categoria com id: " + id + " não encontrada"
+                ));
     }
 
-    public Category create(NewCategoryRequest category) {
-        Category newCategory = new Category();
+    public Category create(CategoryRequest categoryRequest) {
+        boolean existsByName = categoryRepository
+                .existsByName(categoryRequest.name());
 
-        newCategory.setName(category.name());
-        newCategory.setColor(category.color());
-        newCategory.setBackgroundColor(category.backgroundColor());
+        if (existsByName) {
+            throw new UniqueFieldConflictException(
+                    "Categoria com o nome " + categoryRequest.name() + " já está cadastrada"
+            );
+        }
 
-        return categoryRepository.save(newCategory);
+        Category category = new Category(
+                categoryRequest.name(),
+                categoryRequest.color(),
+                categoryRequest.backgroundColor()
+        );
+
+        return categoryRepository.save(category);
     }
 
-    public Category update(UUID id, Category  category) {
-        Category updatedCategory = new Category();
+    public Category update(UUID id, CategoryRequest categoryRequest) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Categoria com id: " + id + " não encontrada"
+                ));
 
-        updatedCategory.setId(id);
-        updatedCategory.setName(category.getName());
-        updatedCategory.setColor(category.getColor());
-        updatedCategory.setBackgroundColor(category.getBackgroundColor());
+        category.setName(categoryRequest.name());
+        category.setColor(categoryRequest.color());
+        category.setBackgroundColor(categoryRequest.backgroundColor());
 
-        return categoryRepository.save(updatedCategory);
+        return categoryRepository.save(category);
     }
 
     public void delete(UUID id) {
+        boolean existsById = categoryRepository.existsById(id);
+
+        if (!existsById) {
+            throw new ResourceNotFoundException(
+                    "Categoria com id: " + id + " não encontrada"
+            );
+        }
+
         categoryRepository.deleteById(id);
     }
 }

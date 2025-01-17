@@ -3,7 +3,7 @@ package com.catalogar.category;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 
-public record NewCategoryRequest(
+public record CategoryRequest(
         @NotEmpty(message = "campo obrigatório")
         String name,
         @NotEmpty(message = "campo obrigatório")
