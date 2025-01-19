@@ -2,7 +2,6 @@ package com.catalogar.category;
 
 import com.catalogar.exception.ResourceNotFoundException;
 import com.catalogar.exception.UniqueFieldConflictException;
-import jakarta.validation.Validator;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -13,14 +12,14 @@ import java.util.UUID;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
 
-    public CategoryService(CategoryRepository categoryRepository, Validator validator) {
+    public CategoryService(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
 
     public List<Category> getAll(CategoryFilter filter) {
-        Sort.Direction direction = Sort.Direction.valueOf(Sort.Direction.class, filter.order());
-
-        return categoryRepository.findAll(Sort.by(direction, filter.field()));
+        return categoryRepository.findAll(Sort.by(
+                        filter.direction(),
+                        filter.field()));
     }
 
     public Category getById(UUID id) {

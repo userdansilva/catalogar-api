@@ -1,6 +1,7 @@
 package com.catalogar.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -16,10 +17,10 @@ public class DefaultExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiError> handle(
             ResourceNotFoundException e,
-            HttpServletRequest httpServletRequest
+            HttpServletRequest request
     ) {
         ApiError apiError = new ApiError(
-                httpServletRequest.getRequestURI(),
+                request.getRequestURI(),
                 e.getMessage(),
                 HttpStatus.NOT_FOUND.value(),
                 ZonedDateTime.now(),
@@ -35,7 +36,7 @@ public class DefaultExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiError> handle(
             MethodArgumentNotValidException e,
-            HttpServletRequest httpServletRequest
+            HttpServletRequest request
     ) {
         List<ValidationError> errors = e.getFieldErrors().stream()
                 .map(error -> new ValidationError(
@@ -45,7 +46,7 @@ public class DefaultExceptionHandler {
                 .toList();
 
         ApiError apiError = new ApiError(
-                httpServletRequest.getRequestURI(),
+                request.getRequestURI(),
                 "Ops! Alguns dados não foram aceitos",
                 HttpStatus.BAD_REQUEST.value(),
                 ZonedDateTime.now(),
@@ -58,13 +59,36 @@ public class DefaultExceptionHandler {
         );
     }
 
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ApiError> handle(
+            ConstraintViolationException e,
+            HttpServletRequest request
+    ) {
+        List<ValidationError> errors = e.getConstraintViolations().stream()
+                .map(error -> new ValidationError(
+                        error.getPropertyPath().toString(),
+                        error.getMessage()
+                ))
+                .toList();
+
+        ApiError apiError = new ApiError(
+                request.getRequestURI(),
+                "Ops! Alguns dados não foram aceitos",
+                HttpStatus.BAD_REQUEST.value(),
+                ZonedDateTime.now(),
+                errors
+        );
+
+        return new ResponseEntity<ApiError>(apiError, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(UniqueFieldConflictException.class)
     public ResponseEntity<ApiError> handle(
             UniqueFieldConflictException e,
-            HttpServletRequest httpServletRequest
+            HttpServletRequest request
     ) {
         ApiError apiError = new ApiError(
-                httpServletRequest.getRequestURI(),
+                request.getRequestURI(),
                 e.getMessage(),
                 HttpStatus.CONFLICT.value(),
                 ZonedDateTime.now(),
@@ -77,10 +101,12 @@ public class DefaultExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handle(
             Exception e,
-            HttpServletRequest httpServletRequest
+            HttpServletRequest request
     ) {
+        System.out.println(e.getClass());
+
         ApiError apiError = new ApiError(
-                httpServletRequest.getRequestURI(),
+                request.getRequestURI(),
                 e.getMessage(),
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 ZonedDateTime.now(),
