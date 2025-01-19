@@ -1,20 +1,16 @@
 package com.catalogar.category;
 
+import com.catalogar.validation.Hexadecimal;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
 
 public record CategoryRequest(
-        @NotEmpty(message = "campo obrigatório")
+        @NotEmpty(message = "Nome da categoria é obrigatório")
         String name,
-        @NotEmpty(message = "campo obrigatório")
-        @Pattern(
-                regexp = "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$",
-                message = "deve ser hexadecimal")
+        @NotEmpty(message = "Cor do texto é obrigatória")
+        @Hexadecimal(message = "Cor do texto deve ser hexadecimal. Exemplo: #FFFFFF")
         String color,
-        @NotEmpty(message = "campo obrigatório")
-        @Pattern(
-                regexp = "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$",
-                message = "deve ser hexadecimal")
+        @NotEmpty(message = "Cor de fundo é obrigatória")
+        @Hexadecimal(message = "Cor de fundo deve ser hexadecimal. Exemplo: #FD0054")
         String backgroundColor
 ) {
 }
