@@ -6,12 +6,12 @@ import org.springframework.data.domain.Sort;
 public class CategoryFilterDto {
     @Pattern(
             regexp = "asc|desc",
-            message = "Ordenação inválida. Valores permitidos: asc, desc"
+            message = "Ordenação inválida. Valores permitidos: crescente, decrescente"
     )
     private final String order;
     @Pattern(
             regexp = "name|createdAt",
-            message = "Campo de ordenação inválido. Valores permitidos: name, createdAt"
+            message = "Campo de ordenação inválido. Valores permitidos: nome, data de criação"
     )
     private final String field;
 
