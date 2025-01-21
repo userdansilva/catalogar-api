@@ -9,18 +9,29 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
-@Entity
+@Entity(name = "Category")
 @EntityListeners(AuditingEntityListener.class)
+@Table(name = "category")
 public class Category {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(updatable = false)
     private UUID id;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String name;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String color;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String backgroundColor;
+
     @CreatedDate
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
     @LastModifiedDate
     @Column(nullable = false)
     private LocalDateTime updatedAt;
