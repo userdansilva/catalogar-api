@@ -1,5 +1,6 @@
-package com.catalogar.category;
+package com.catalogar.repository;
 
+import com.catalogar.model.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

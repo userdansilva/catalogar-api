@@ -1,12 +1,15 @@
-package com.catalogar.category;
+package com.catalogar.controller;
 
+import com.catalogar.dto.CategoryFilterDto;
+import com.catalogar.dto.CategoryRequestDto;
+import com.catalogar.model.Category;
+import com.catalogar.service.CategoryService;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import jakarta.validation.Validator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,22 +33,24 @@ public class CategoryController {
                     name = "sort",
                     required = false,
                     defaultValue = "desc"
-            ) String sort,
+            )
+            String sort,
             @RequestParam(
                     name = "field",
                     required = false,
                     defaultValue = "createdAt"
-            ) String field
+            )
+            String field
     ) {
-        CategoryFilterDto filter = new CategoryFilterDto(sort, field);
+        CategoryFilterDto filterDto = new CategoryFilterDto(sort, field);
 
-        Set<ConstraintViolation<CategoryFilterDto>> violations = validator.validate(filter);
+        Set<ConstraintViolation<CategoryFilterDto>> violations = validator.validate(filterDto);
 
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
 
-        List<Category> categories = categoryService.getAll(filter.toCategoryFilter());
+        List<Category> categories = categoryService.getAll(filterDto);
 
         return ResponseEntity.ok().body(categories);
     }
@@ -61,9 +66,9 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<Category> create(
-            @Valid @RequestBody CategoryRequest categoryRequest
+            @Valid @RequestBody CategoryRequestDto categoryRequestDto
     ) {
-        Category category = categoryService.create(categoryRequest);
+        Category category = categoryService.create(categoryRequestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(category);
     }
@@ -71,8 +76,7 @@ public class CategoryController {
     @PutMapping("{id}")
     public ResponseEntity<Category> update(
             @PathVariable UUID id,
-            @RequestBody CategoryRequest categoryRequest,
-            BindingResult bindingResult
+            @Valid @RequestBody CategoryRequestDto categoryRequest
     ) {
         Category category = categoryService.update(id, categoryRequest);
 

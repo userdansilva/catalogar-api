@@ -1,10 +1,15 @@
-package com.catalogar.category;
+package com.catalogar.service;
 
+import com.catalogar.dto.CategoryFilterDto;
+import com.catalogar.dto.CategoryRequestDto;
 import com.catalogar.exception.ResourceNotFoundException;
 import com.catalogar.exception.UniqueFieldConflictException;
+import com.catalogar.model.Category;
+import com.catalogar.repository.CategoryRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,21 +21,24 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-    public List<Category> getAll(CategoryFilter filter) {
+    public List<Category> getAll(CategoryFilterDto filter) {
+        Sort.Direction direction = Sort.Direction.valueOf(
+                Sort.Direction.class,
+                filter.order().toUpperCase());
+
         return categoryRepository.findAll(Sort.by(
-                        filter.direction(),
-                        filter.field()));
+                direction,
+                filter.field()));
     }
 
     public Category getById(UUID id) {
         return categoryRepository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Categoria com id: " + id + " não encontrada"
-                ));
+                        "Categoria com id: " + id + " não encontrada"));
     }
 
-    public Category create(CategoryRequest categoryRequest) {
+    public Category create(CategoryRequestDto categoryRequest) {
         boolean existsByName = categoryRepository
                 .existsByName(categoryRequest.name());
 
@@ -42,22 +50,31 @@ public class CategoryService {
 
         Category category = new Category(
                 categoryRequest.name(),
-                categoryRequest.color(),
+                categoryRequest.slug(),
+                categoryRequest.textColor(),
                 categoryRequest.backgroundColor()
         );
+
+        if (!categoryRequest.isActive()) {
+            category.setDisabledAt(LocalDateTime.now());
+        }
 
         return categoryRepository.save(category);
     }
 
-    public Category update(UUID id, CategoryRequest categoryRequest) {
+    public Category update(UUID id, CategoryRequestDto categoryRequest) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Categoria com id: " + id + " não encontrada"
                 ));
 
         category.setName(categoryRequest.name());
-        category.setColor(categoryRequest.color());
+        category.setTextColor(categoryRequest.textColor());
         category.setBackgroundColor(categoryRequest.backgroundColor());
+
+        if (!categoryRequest.isActive()) {
+            category.setDisabledAt(LocalDateTime.now());
+        }
 
         return categoryRepository.save(category);
     }
