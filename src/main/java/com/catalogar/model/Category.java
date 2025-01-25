@@ -77,20 +77,46 @@ public class Category {
     public Category() {
     }
 
-    public Category(String name, String slug, String textColor, String backgroundColor) {
+    public Category(String name,
+                    String slug,
+                    String textColor,
+                    String backgroundColor) {
         this.name = name;
         this.slug = slug;
         this.textColor = textColor;
         this.backgroundColor = backgroundColor;
     }
 
-    public Category(UUID id, String name, String slug, String textColor, String backgroundColor, LocalDateTime disabledAt) {
+    public Category(UUID id,
+                    String name,
+                    String slug,
+                    String textColor,
+                    String backgroundColor,
+                    LocalDateTime disabledAt) {
         this.id = id;
         this.name = name;
         this.slug = slug;
         this.textColor = textColor;
         this.backgroundColor = backgroundColor;
         this.disabledAt = disabledAt;
+    }
+
+    public Category(UUID id,
+                    String name,
+                    String slug,
+                    String textColor,
+                    String backgroundColor,
+                    LocalDateTime disabledAt,
+                    LocalDateTime createdAt,
+                    LocalDateTime updatedAt) {
+        this.id = id;
+        this.name = name;
+        this.slug = slug;
+        this.textColor = textColor;
+        this.backgroundColor = backgroundColor;
+        this.disabledAt = disabledAt;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public UUID getId() {

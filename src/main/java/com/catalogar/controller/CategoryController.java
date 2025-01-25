@@ -1,7 +1,9 @@
 package com.catalogar.controller;
 
+import com.catalogar.dto.CategoryDto;
 import com.catalogar.dto.CategoryFilterDto;
 import com.catalogar.dto.CategoryRequestDto;
+import com.catalogar.mapper.CategoryMapper;
 import com.catalogar.model.Category;
 import com.catalogar.service.CategoryService;
 import jakarta.validation.ConstraintViolation;
@@ -21,14 +23,16 @@ import java.util.UUID;
 public class CategoryController {
     private final CategoryService categoryService;
     private final Validator validator;
+    private final CategoryMapper categoryMapper;
 
-    public CategoryController(CategoryService categoryService, Validator validator) {
+    public CategoryController(CategoryService categoryService, Validator validator, CategoryMapper categoryMapper) {
         this.categoryService = categoryService;
         this.validator = validator;
+        this.categoryMapper = categoryMapper;
     }
 
     @GetMapping
-    public ResponseEntity<List<Category>> getAll(
+    public ResponseEntity<List<CategoryDto>> getAll(
             @RequestParam(
                     name = "sort",
                     required = false,
@@ -50,37 +54,42 @@ public class CategoryController {
             throw new ConstraintViolationException(violations);
         }
 
-        List<Category> categories = categoryService.getAll(filterDto);
+        List<CategoryDto> categories = categoryService
+                .getAll(filterDto)
+                .stream()
+                .map(categoryMapper::toDto)
+                .toList();
 
         return ResponseEntity.ok().body(categories);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Category> getById(
+    public ResponseEntity<CategoryDto> getById(
             @PathVariable("id") UUID id
     ) {
         Category category = categoryService.getById(id);
 
-        return ResponseEntity.ok().body(category);
+        return ResponseEntity.ok().body(categoryMapper.toDto(category));
     }
 
     @PostMapping
-    public ResponseEntity<Category> create(
+    public ResponseEntity<CategoryDto> create(
             @Valid @RequestBody CategoryRequestDto categoryRequestDto
     ) {
         Category category = categoryService.create(categoryRequestDto);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(category);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(categoryMapper.toDto(category));
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Category> update(
+    public ResponseEntity<CategoryDto> update(
             @PathVariable UUID id,
             @Valid @RequestBody CategoryRequestDto categoryRequest
     ) {
         Category category = categoryService.update(id, categoryRequest);
 
-        return ResponseEntity.ok().body(category);
+        return ResponseEntity.ok().body(categoryMapper.toDto(category));
     }
 
     @DeleteMapping("{id}")

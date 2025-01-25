@@ -15,7 +15,6 @@ public record CategoryRequestDto(
         String textColor,
         @NotEmpty(message = "Cor de fundo é obrigatória")
         @Hexadecimal(message = "Cor de fundo deve ser hexadecimal. Exemplo: #FD0054")
-        String backgroundColor,
-        boolean isActive
+        String backgroundColor
 ) {
 }

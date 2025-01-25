@@ -4,31 +4,29 @@ import com.catalogar.dto.CategoryFilterDto;
 import com.catalogar.dto.CategoryRequestDto;
 import com.catalogar.exception.ResourceNotFoundException;
 import com.catalogar.exception.UniqueFieldConflictException;
+import com.catalogar.mapper.CategoryMapper;
 import com.catalogar.model.Category;
 import com.catalogar.repository.CategoryRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 public class CategoryService {
     private final CategoryRepository categoryRepository;
+    private final CategoryMapper categoryMapper;
 
-    public CategoryService(CategoryRepository categoryRepository) {
+    public CategoryService(CategoryRepository categoryRepository, CategoryMapper categoryMapper) {
         this.categoryRepository = categoryRepository;
+        this.categoryMapper = categoryMapper;
     }
 
-    public List<Category> getAll(CategoryFilterDto filter) {
-        Sort.Direction direction = Sort.Direction.valueOf(
-                Sort.Direction.class,
-                filter.order().toUpperCase());
+    public List<Category> getAll(CategoryFilterDto filterDto) {
+        Sort sort = categoryMapper.toSort(filterDto);
 
-        return categoryRepository.findAll(Sort.by(
-                direction,
-                filter.field()));
+        return categoryRepository.findAll(sort);
     }
 
     public Category getById(UUID id) {
@@ -38,26 +36,17 @@ public class CategoryService {
                         "Categoria com id: " + id + " não encontrada"));
     }
 
-    public Category create(CategoryRequestDto categoryRequest) {
+    public Category create(CategoryRequestDto categoryRequestDto) {
         boolean existsByName = categoryRepository
-                .existsByName(categoryRequest.name());
+                .existsByName(categoryRequestDto.name());
 
         if (existsByName) {
             throw new UniqueFieldConflictException(
-                    "Categoria com o nome " + categoryRequest.name() + " já está cadastrada"
+                    "Categoria com o nome " + categoryRequestDto.name() + " já está cadastrada"
             );
         }
 
-        Category category = new Category(
-                categoryRequest.name(),
-                categoryRequest.slug(),
-                categoryRequest.textColor(),
-                categoryRequest.backgroundColor()
-        );
-
-        if (!categoryRequest.isActive()) {
-            category.setDisabledAt(LocalDateTime.now());
-        }
+        Category category = categoryMapper.toCategory(categoryRequestDto);
 
         return categoryRepository.save(category);
     }
@@ -71,10 +60,6 @@ public class CategoryService {
         category.setName(categoryRequest.name());
         category.setTextColor(categoryRequest.textColor());
         category.setBackgroundColor(categoryRequest.backgroundColor());
-
-        if (!categoryRequest.isActive()) {
-            category.setDisabledAt(LocalDateTime.now());
-        }
 
         return categoryRepository.save(category);
     }
