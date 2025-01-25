@@ -23,19 +23,6 @@ public class CategoryMapper {
         );
     }
 
-    public Category toCategory(CategoryDto categoryDto) {
-        return new Category(
-                categoryDto.id(),
-                categoryDto.name(),
-                categoryDto.slug(),
-                categoryDto.textColor(),
-                categoryDto.backgroundColor(),
-                categoryDto.disabledAt(),
-                categoryDto.createdAt(),
-                categoryDto.updatedAt()
-        );
-    }
-
     public Category toCategory(CategoryRequestDto categoryRequestDto) {
         return new Category(
                 categoryRequestDto.name(),

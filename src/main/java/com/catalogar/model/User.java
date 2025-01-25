@@ -91,17 +91,6 @@ public class User {
     public User() {
     }
 
-    public User(String name, String email) {
-        this.name = name;
-        this.email = email;
-    }
-
-    public User(UUID id, String name, String email) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
