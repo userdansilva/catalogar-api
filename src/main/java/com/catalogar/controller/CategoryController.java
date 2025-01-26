@@ -1,5 +1,6 @@
 package com.catalogar.controller;
 
+import com.catalogar.dto.ApiResponseDto;
 import com.catalogar.dto.CategoryDto;
 import com.catalogar.dto.CategoryFilterDto;
 import com.catalogar.dto.CategoryRequestDto;
@@ -10,6 +11,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import jakarta.validation.Validator;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,21 +34,36 @@ public class CategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CategoryDto>> getAll(
+    public ResponseEntity<ApiResponseDto<List<CategoryDto>>> getAll(
             @RequestParam(
                     name = "sort",
                     required = false,
                     defaultValue = "desc"
             )
             String sort,
+
             @RequestParam(
                     name = "field",
                     required = false,
                     defaultValue = "createdAt"
             )
-            String field
+            String field,
+
+            @RequestParam(
+                    name = "page",
+                    required = false,
+                    defaultValue = "1"
+            )
+            String page,
+
+            @RequestParam(
+                    name = "perPage",
+                    required = false,
+                    defaultValue = "10"
+            )
+            String perPage
     ) {
-        CategoryFilterDto filterDto = new CategoryFilterDto(sort, field);
+        CategoryFilterDto filterDto = new CategoryFilterDto(sort, field, page, perPage);
 
         Set<ConstraintViolation<CategoryFilterDto>> violations = validator.validate(filterDto);
 
@@ -54,13 +71,11 @@ public class CategoryController {
             throw new ConstraintViolationException(violations);
         }
 
-        List<CategoryDto> categories = categoryService
-                .getAll(filterDto)
-                .stream()
-                .map(categoryMapper::toDto)
-                .toList();
+        Page<Category> categories = categoryService
+                .getAll(filterDto);
 
-        return ResponseEntity.ok().body(categories);
+        return ResponseEntity.ok()
+                .body(categoryMapper.toApiResponseDto(categories));
     }
 
     @GetMapping("{id}")

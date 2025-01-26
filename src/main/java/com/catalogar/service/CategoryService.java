@@ -7,10 +7,12 @@ import com.catalogar.exception.UniqueFieldConflictException;
 import com.catalogar.mapper.CategoryMapper;
 import com.catalogar.model.Category;
 import com.catalogar.repository.CategoryRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -23,10 +25,15 @@ public class CategoryService {
         this.categoryMapper = categoryMapper;
     }
 
-    public List<Category> getAll(CategoryFilterDto filterDto) {
+    public Page<Category> getAll(CategoryFilterDto filterDto) {
+        int pageNumber = Integer.parseInt(filterDto.page());
+        int pageSize = Integer.parseInt(filterDto.perPage());
+
         Sort sort = categoryMapper.toSort(filterDto);
 
-        return categoryRepository.findAll(sort);
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+
+        return categoryRepository.findAll(pageable);
     }
 
     public Category getById(UUID id) {
