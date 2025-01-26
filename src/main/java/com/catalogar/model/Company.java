@@ -6,22 +6,13 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
-@Entity(name = "Catalog")
+@Entity(name = "Company")
 @EntityListeners(AuditingEntityListener.class)
-@Table(
-        name = "catalog",
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "catalog_slug_unique",
-                        columnNames = "slug"
-                )
-        }
-)
-public class Catalog {
+@Table(name = "company")
+public class Company {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -33,17 +24,27 @@ public class Catalog {
     private UUID id;
 
     @Column(
-            name = "slug",
-            nullable = false,
+            name = "name",
             columnDefinition = "TEXT"
     )
-    private String slug;
+    private String name;
 
     @Column(
-            name = "published_at",
-            columnDefinition = "TIMESTAMP WITH TIME ZONE"
+            name = "site_url",
+            columnDefinition = "TEXT"
     )
-    private ZonedDateTime publishedAt;
+    private String siteUrl;
+
+    @Column(
+            name = "phone_number",
+            columnDefinition = "TEXT"
+    )
+    private String phoneNumber;
+
+    @Column(
+            name = "logo_url"
+    )
+    private String logoUrl;
 
     @CreatedDate
     @Column(
@@ -62,6 +63,9 @@ public class Catalog {
     )
     private LocalDateTime updatedAt;
 
+    public Company() {
+    }
+
     public UUID getId() {
         return id;
     }
@@ -70,20 +74,36 @@ public class Catalog {
         this.id = id;
     }
 
-    public String getSlug() {
-        return slug;
+    public String getName() {
+        return name;
     }
 
-    public void setSlug(String slug) {
-        this.slug = slug;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public ZonedDateTime getPublishedAt() {
-        return publishedAt;
+    public String getSiteUrl() {
+        return siteUrl;
     }
 
-    public void setPublishedAt(ZonedDateTime publishedAt) {
-        this.publishedAt = publishedAt;
+    public void setSiteUrl(String siteUrl) {
+        this.siteUrl = siteUrl;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getLogoUrl() {
+        return logoUrl;
+    }
+
+    public void setLogoUrl(String logoUrl) {
+        this.logoUrl = logoUrl;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -102,18 +122,15 @@ public class Catalog {
         this.updatedAt = updatedAt;
     }
 
-    public Catalog() {
-    }
-
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        Catalog catalog = (Catalog) o;
-        return Objects.equals(id, catalog.id) && Objects.equals(slug, catalog.slug) && Objects.equals(publishedAt, catalog.publishedAt);
+        Company company = (Company) o;
+        return Objects.equals(id, company.id) && Objects.equals(name, company.name) && Objects.equals(siteUrl, company.siteUrl) && Objects.equals(phoneNumber, company.phoneNumber) && Objects.equals(logoUrl, company.logoUrl);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, slug, publishedAt);
+        return Objects.hash(id, name, siteUrl, phoneNumber, logoUrl);
     }
 }
