@@ -10,18 +10,18 @@ import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
-@Entity(name = "User")
+@Entity(name = "Catalog")
 @EntityListeners(AuditingEntityListener.class)
 @Table(
-        name = "user_profile",
+        name = "catalog",
         uniqueConstraints = {
                 @UniqueConstraint(
-                        name = "user_email_unique",
-                        columnNames = "email"
+                        name = "catalog_slug_unique",
+                        columnNames = "slug"
                 )
         }
 )
-public class User {
+public class Catalog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -33,43 +33,17 @@ public class User {
     private UUID id;
 
     @Column(
-            name = "name",
+            name = "slug",
             nullable = false,
             columnDefinition = "TEXT"
     )
-    private String name;
+    private String slug;
 
     @Column(
-            name = "email",
-            updatable = false,
-            nullable = false,
-            columnDefinition = "TEXT"
-    )
-    private String email;
-
-    @Column(
-            name = "password",
-            columnDefinition = "TEXT"
-    )
-    private String password;
-
-    @Column(
-            name = "phone_number",
-            columnDefinition = "TEXT"
-    )
-    private String phoneNumber;
-
-    @Column(
-            name = "disable_reason",
-            columnDefinition = "TEXT"
-    )
-    private String disableReason;
-
-    @Column(
-            name = "disabled_at",
+            name = "published_at",
             columnDefinition = "TIMESTAMP WITH TIME ZONE"
     )
-    private ZonedDateTime disabledAt;
+    private ZonedDateTime publishedAt;
 
     @CreatedDate
     @Column(
@@ -88,18 +62,18 @@ public class User {
     )
     private LocalDateTime updatedAt;
 
-    public User() {
+    public Catalog() {
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(email, user.email) && Objects.equals(phoneNumber, user.phoneNumber) && Objects.equals(disableReason, user.disableReason) && Objects.equals(disabledAt, user.disabledAt);
+        Catalog catalog = (Catalog) o;
+        return Objects.equals(id, catalog.id) && Objects.equals(slug, catalog.slug) && Objects.equals(publishedAt, catalog.publishedAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, email, phoneNumber, disableReason, disabledAt);
+        return Objects.hash(id, slug, publishedAt);
     }
 }
