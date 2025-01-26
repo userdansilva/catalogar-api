@@ -14,6 +14,17 @@ import java.util.UUID;
 @Table(name = "company")
 public class Company {
 
+    @OneToOne(
+            cascade = CascadeType.ALL
+    )
+    @JoinColumn(
+            name = "catalog_id",
+            referencedColumnName = "id",
+            updatable = false,
+            nullable = false
+    )
+    private Catalog catalog;
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(
@@ -25,7 +36,8 @@ public class Company {
 
     @Column(
             name = "name",
-            columnDefinition = "TEXT"
+            columnDefinition = "TEXT",
+            nullable = false
     )
     private String name;
 
@@ -42,7 +54,8 @@ public class Company {
     private String phoneNumber;
 
     @Column(
-            name = "logo_url"
+            name = "logo_url",
+            columnDefinition = "TEXT"
     )
     private String logoUrl;
 
@@ -64,6 +77,21 @@ public class Company {
     private LocalDateTime updatedAt;
 
     public Company() {
+    }
+
+    public Company(String name, String siteUrl, String phoneNumber, String logoUrl) {
+        this.name = name;
+        this.siteUrl = siteUrl;
+        this.phoneNumber = phoneNumber;
+        this.logoUrl = logoUrl;
+    }
+
+    public Company(String name, String siteUrl, String phoneNumber, String logoUrl, Catalog catalog) {
+        this.name = name;
+        this.siteUrl = siteUrl;
+        this.phoneNumber = phoneNumber;
+        this.logoUrl = logoUrl;
+        this.catalog = catalog;
     }
 
     public UUID getId() {

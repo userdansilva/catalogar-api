@@ -23,6 +23,17 @@ import java.util.UUID;
 )
 public class Catalog {
 
+//    @OneToOne(
+//            cascade = CascadeType.ALL
+//    )
+//    @JoinColumn(
+//            name = "user_profile_id",
+//            referencedColumnName = "id",
+//            updatable = false,
+//            nullable = false
+//    )
+//    private UserProfile userProfile;
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(
@@ -103,6 +114,15 @@ public class Catalog {
     }
 
     public Catalog() {
+    }
+
+    public Catalog(String slug) {
+        this.slug = slug;
+    }
+
+    public Catalog(String slug, ZonedDateTime publishedAt) {
+        this.slug = slug;
+        this.publishedAt = publishedAt;
     }
 
     @Override

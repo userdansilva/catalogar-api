@@ -1,13 +1,17 @@
 package com.catalogar;
 
-import com.catalogar.model.Category;
-import com.catalogar.repository.CategoryRepository;
-import com.github.javafaker.Faker;
+import com.catalogar.dto.CompanyRequestDto;
+import com.catalogar.model.Catalog;
+import com.catalogar.model.Company;
+import com.catalogar.service.CatalogService;
+import com.catalogar.service.CompanyService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+
+import java.time.ZonedDateTime;
 
 @SpringBootApplication
 @EnableJpaAuditing
@@ -18,21 +22,27 @@ public class CatalogarApplication {
 	}
 
 	@Bean
-	CommandLineRunner commandLineRunner(CategoryRepository categoryRepository) {
+	CommandLineRunner commandLineRunner(
+			CatalogService catalogService,
+			CompanyService companyService
+	) {
 		return args -> {
-			Faker faker = new Faker();
+			Catalog catalog = new Catalog(
+				"catalogar",
+				ZonedDateTime.now()
+			);
 
-			for (int i = 0; i <= 20; i++) {
-				Category category = new Category(
-						faker.funnyName().name(),
-						faker.lorem().word(),
-						faker.color().hex(),
-						faker.color().hex()
-				);
+			Company company = companyService.create(
+					new CompanyRequestDto(
+							"Catalogar",
+							"https://catalogar.com.br",
+							"(77) 91234-5678",
+							"https://catalogar.com.br/logo.svg"
+					),
+					catalog
+			);
 
-				categoryRepository.save(category);
-			}
+			System.out.println("--- CommandLineRunner finished! ---");
 		};
 	}
-
 }
