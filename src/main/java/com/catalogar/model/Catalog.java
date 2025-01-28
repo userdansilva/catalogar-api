@@ -23,17 +23,6 @@ import java.util.UUID;
 )
 public class Catalog {
 
-//    @OneToOne(
-//            cascade = CascadeType.ALL
-//    )
-//    @JoinColumn(
-//            name = "user_profile_id",
-//            referencedColumnName = "id",
-//            updatable = false,
-//            nullable = false
-//    )
-//    private UserProfile userProfile;
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(
@@ -72,6 +61,12 @@ public class Catalog {
             columnDefinition = "TIMESTAMP WITH TIME ZONE"
     )
     private LocalDateTime updatedAt;
+
+    @OneToOne(
+            mappedBy = "catalog",
+            orphanRemoval = true
+    )
+    private Company company;
 
     public UUID getId() {
         return id;
@@ -113,6 +108,14 @@ public class Catalog {
         this.updatedAt = updatedAt;
     }
 
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
     public Catalog() {
     }
 
@@ -129,11 +132,23 @@ public class Catalog {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Catalog catalog = (Catalog) o;
-        return Objects.equals(id, catalog.id) && Objects.equals(slug, catalog.slug) && Objects.equals(publishedAt, catalog.publishedAt);
+        return Objects.equals(id, catalog.id) && Objects.equals(slug, catalog.slug) && Objects.equals(publishedAt, catalog.publishedAt) && Objects.equals(createdAt, catalog.createdAt) && Objects.equals(updatedAt, catalog.updatedAt) && Objects.equals(company, catalog.company);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, slug, publishedAt);
+        return Objects.hash(id, slug, publishedAt, createdAt, updatedAt, company);
+    }
+
+    @Override
+    public String toString() {
+        return "Catalog{" +
+                "id=" + id +
+                ", slug='" + slug + '\'' +
+                ", publishedAt=" + publishedAt +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", company=" + company +
+                '}';
     }
 }

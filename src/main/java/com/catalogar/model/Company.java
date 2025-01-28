@@ -14,17 +14,6 @@ import java.util.UUID;
 @Table(name = "company")
 public class Company {
 
-    @OneToOne(
-            cascade = CascadeType.ALL
-    )
-    @JoinColumn(
-            name = "catalog_id",
-            referencedColumnName = "id",
-            updatable = false,
-            nullable = false
-    )
-    private Catalog catalog;
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(
@@ -75,6 +64,21 @@ public class Company {
             columnDefinition = "TIMESTAMP WITH TIME ZONE"
     )
     private LocalDateTime updatedAt;
+
+    @OneToOne(
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER
+    )
+    @JoinColumn(
+            name = "catalog_id",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(
+                    name = "company_catalog_id_fk"
+            ),
+            updatable = false,
+            nullable = false
+    )
+    private Catalog catalog;
 
     public Company() {
     }
@@ -168,5 +172,19 @@ public class Company {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, siteUrl, phoneNumber, logoUrl);
+    }
+
+    @Override
+    public String toString() {
+        return "Company{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", siteUrl='" + siteUrl + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", logoUrl='" + logoUrl + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", catalog=" + catalog +
+                '}';
     }
 }

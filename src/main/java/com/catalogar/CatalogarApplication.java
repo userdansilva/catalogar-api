@@ -42,6 +42,8 @@ public class CatalogarApplication {
 					catalog
 			);
 
+			System.out.println(company);
+
 			System.out.println("--- CommandLineRunner finished! ---");
 		};
 	}
