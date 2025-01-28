@@ -38,22 +38,35 @@ public class CategoryMapper {
                 Sort.Direction.class,
                 categoryFilterDto.order().toUpperCase());
 
-        return Sort.by(direction,categoryFilterDto.field());
+        return Sort.by(direction, categoryFilterDto.field());
     }
 
-    public ApiResponseDto<List<CategoryDto>> toApiResponseDto(Page<Category> categoryPage) {
-        PaginationMetadataDto pagination = new PaginationMetadataDto(
-                categoryPage.getNumber(),
+    public ApiResponse<List<CategoryDto>> toApiResponse(Page<Category> categoryPage) {
+        Pagination pagination = new Pagination(
+                categoryPage.getNumber() + 1,
                 categoryPage.getSize(),
                 categoryPage.getTotalPages(),
                 (int) categoryPage.getTotalElements()
         );
 
-        return new ApiResponseDto<List<CategoryDto>>(
+        Metadata meta = new Metadata(pagination);
+
+        return new ApiResponse<List<CategoryDto>>(
                 categoryPage.stream()
                         .map(this::toDto)
                         .toList(),
-                pagination
+                meta
         );
+    }
+
+    public ApiResponse<CategoryDto> toApiResponse(Category category) {
+        return this.toApiResponse(category, null);
+    }
+
+    public ApiResponse<CategoryDto> toApiResponse(Category category, String message ) {
+        CategoryDto categoryDto = this.toDto(category);
+        Metadata meta = new Metadata(message);
+
+        return new ApiResponse<CategoryDto>(categoryDto, message);
     }
 }

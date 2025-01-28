@@ -1,6 +1,6 @@
 package com.catalogar.dto;
 
-public record PaginationMetadataDto(
+public record Pagination(
         int currentPage,
         int perPage,
         int totalPages,

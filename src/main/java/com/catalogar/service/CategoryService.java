@@ -26,7 +26,7 @@ public class CategoryService {
     }
 
     public Page<Category> getAll(CategoryFilterDto filterDto) {
-        int pageNumber = Integer.parseInt(filterDto.page());
+        int pageNumber = Integer.parseInt(filterDto.page()) - 1;
         int pageSize = Integer.parseInt(filterDto.perPage());
 
         Sort sort = categoryMapper.toSort(filterDto);

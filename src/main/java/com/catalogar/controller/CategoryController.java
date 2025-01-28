@@ -1,6 +1,6 @@
 package com.catalogar.controller;
 
-import com.catalogar.dto.ApiResponseDto;
+import com.catalogar.dto.ApiResponse;
 import com.catalogar.dto.CategoryDto;
 import com.catalogar.dto.CategoryFilterDto;
 import com.catalogar.dto.CategoryRequestDto;
@@ -34,7 +34,7 @@ public class CategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponseDto<List<CategoryDto>>> getAll(
+    public ResponseEntity<ApiResponse<List<CategoryDto>>> getAll(
             @RequestParam(
                     name = "sort",
                     required = false,
@@ -74,43 +74,69 @@ public class CategoryController {
         Page<Category> categories = categoryService
                 .getAll(filterDto);
 
+        System.out.println(categories);
+
         return ResponseEntity.ok()
-                .body(categoryMapper.toApiResponseDto(categories));
+                .body(categoryMapper.toApiResponse(categories));
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<CategoryDto> getById(
+    public ResponseEntity<ApiResponse<CategoryDto>> getById(
             @PathVariable("id") UUID id
     ) {
         Category category = categoryService.getById(id);
 
-        return ResponseEntity.ok().body(categoryMapper.toDto(category));
+        return ResponseEntity.ok()
+                .body(categoryMapper.toApiResponse(category));
     }
 
     @PostMapping
-    public ResponseEntity<CategoryDto> create(
+    public ResponseEntity<ApiResponse<CategoryDto>> create(
             @Valid @RequestBody CategoryRequestDto categoryRequestDto
     ) {
         Category category = categoryService.create(categoryRequestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(categoryMapper.toDto(category));
+                .body(categoryMapper
+                        .toApiResponse(
+                                category,
+                                "Categoria "
+                                        + category.getName()
+                                        + " criada com sucesso!"
+                        ));
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<CategoryDto> update(
+    public ResponseEntity<ApiResponse<CategoryDto>> update(
             @PathVariable UUID id,
             @Valid @RequestBody CategoryRequestDto categoryRequest
     ) {
         Category category = categoryService.update(id, categoryRequest);
 
-        return ResponseEntity.ok().body(categoryMapper.toDto(category));
+        return ResponseEntity.ok()
+                .body(categoryMapper
+                        .toApiResponse(
+                                category,
+                                "Categoria "
+                                + category.getName()
+                                + " atualizada com sucesso!"
+                        ));
     }
 
     @DeleteMapping("{id}")
-    public void delete(
+    public ResponseEntity<ApiResponse<Void>> delete(
             @PathVariable UUID id
     ) {
+        Category category = categoryService.getById(id);
+
+        ApiResponse<Void> apiResponse = new ApiResponse<Void>(
+                "Categoria "
+                + category.getName()
+                + " removida com sucesso!"
+        );
+
         categoryService.delete(id);
+
+        return ResponseEntity.ok().body(apiResponse);
     }
 }
