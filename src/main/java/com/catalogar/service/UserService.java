@@ -26,7 +26,14 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Usuário com o id: " + id + " não encontrado"
                 ));
+    }
 
+    public User getByEmail(String email) {
+        return userRepository
+                .findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Usuário com o email: " + email + " não encontrado"
+                ));
     }
 
     public User create(UserRequestDto userRequestDto) {

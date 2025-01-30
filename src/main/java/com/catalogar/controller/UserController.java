@@ -10,8 +10,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
-
 @RestController
 @RequestMapping("api/v1/users")
 public class UserController {
@@ -25,10 +23,9 @@ public class UserController {
 
     @GetMapping("me")
     public ResponseEntity<ApiResponse<UserDto>> getMe() {
-        String uuidSting = "f0b994db-fce7-417d-b778-333302e82a5d";
-        UUID uuid = UUID.fromString(uuidSting);
+        String email = "daniel.sousa@catalogar.com.br";
 
-        User user = userService.getById(uuid);
+        User user = userService.getByEmail(email);
 
         return ResponseEntity.ok()
                 .body(userMapper.toApiResponse(user));
