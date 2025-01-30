@@ -1,5 +1,8 @@
 package com.catalogar.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
     private final T data;
     private final Metadata meta;

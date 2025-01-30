@@ -68,6 +68,21 @@ public class Catalog {
     )
     private Company company;
 
+    @ManyToOne(
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER
+    )
+    @JoinColumn(
+            name = "user_id",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(
+                    name = "catalog_user_id_fk"
+            ),
+            updatable = false,
+            nullable = false
+    )
+    private User user;
+
     public UUID getId() {
         return id;
     }

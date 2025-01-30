@@ -74,8 +74,6 @@ public class CategoryController {
         Page<Category> categories = categoryService
                 .getAll(filterDto);
 
-        System.out.println(categories);
-
         return ResponseEntity.ok()
                 .body(categoryMapper.toApiResponse(categories));
     }

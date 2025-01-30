@@ -7,10 +7,11 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-@Entity(name = "UserProfile")
+@Entity(name = "User")
 @EntityListeners(AuditingEntityListener.class)
 @Table(
         name = "user_profile",
@@ -21,7 +22,7 @@ import java.util.UUID;
                 )
         }
 )
-public class UserProfile {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -88,18 +89,77 @@ public class UserProfile {
     )
     private LocalDateTime updatedAt;
 
-    public UserProfile() {
+    @OneToMany(
+            mappedBy = "user",
+            orphanRemoval = true
+    )
+    private List<Catalog> catalogs;
+
+    public User() {
+    }
+
+    public User(String name, String email) {
+        this.name = name;
+        this.email = email;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public List<Catalog> getCatalogs() {
+        return catalogs;
+    }
+
+    public void setCatalogs(List<Catalog> catalogs) {
+        this.catalogs = catalogs;
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        UserProfile userProfile = (UserProfile) o;
-        return Objects.equals(id, userProfile.id) && Objects.equals(name, userProfile.name) && Objects.equals(email, userProfile.email) && Objects.equals(phoneNumber, userProfile.phoneNumber) && Objects.equals(disableReason, userProfile.disableReason) && Objects.equals(disabledAt, userProfile.disabledAt);
+        User user = (User) o;
+        return Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(email, user.email) && Objects.equals(createdAt, user.createdAt) && Objects.equals(updatedAt, user.updatedAt) && Objects.equals(catalogs, user.catalogs);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, email, phoneNumber, disableReason, disabledAt);
+        return Objects.hash(id, name, email, createdAt, updatedAt, catalogs);
     }
 }

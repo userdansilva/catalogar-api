@@ -19,5 +19,4 @@ public class CatalogController {
         this.catalogMapper = catalogMapper;
     }
 
-    //
 }
