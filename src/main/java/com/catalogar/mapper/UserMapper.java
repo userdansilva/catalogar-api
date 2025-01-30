@@ -16,19 +16,20 @@ public class UserMapper {
         );
     }
 
+    public ApiResponse<UserDto> toApiResponse(User user) {
+        UserDto userDto = this.toDto(user);
+
+        return new ApiResponse<UserDto>(userDto);
+    }
+
     public UserDto toDto(User user) {
         return new UserDto(
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
+                user.getCatalogs(),
                 user.getCreatedAt(),
                 user.getUpdatedAt()
         );
-    }
-
-    public ApiResponse<UserDto> toApiResponse(User user) {
-        UserDto userDto = this.toDto(user);
-
-        return new ApiResponse<UserDto>(userDto);
     }
 }

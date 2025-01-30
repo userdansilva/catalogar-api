@@ -6,7 +6,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -43,7 +42,7 @@ public class Catalog {
             name = "published_at",
             columnDefinition = "TIMESTAMP WITH TIME ZONE"
     )
-    private ZonedDateTime publishedAt;
+    private LocalDateTime publishedAt;
 
     @CreatedDate
     @Column(
@@ -99,11 +98,11 @@ public class Catalog {
         this.slug = slug;
     }
 
-    public ZonedDateTime getPublishedAt() {
+    public LocalDateTime getPublishedAt() {
         return publishedAt;
     }
 
-    public void setPublishedAt(ZonedDateTime publishedAt) {
+    public void setPublishedAt(LocalDateTime publishedAt) {
         this.publishedAt = publishedAt;
     }
 
@@ -131,16 +130,30 @@ public class Catalog {
         this.company = company;
     }
 
-    public Catalog() {
+    public User getUser() {
+        return user;
+    }
+
+    public Catalog(User user, String slug, LocalDateTime publishedAt, Company company) {
+        this.user = user;
+        this.slug = slug;
+        this.publishedAt = publishedAt;
+        this.company = company;
+    }
+
+    public Catalog(User user, String slug, LocalDateTime publishedAt) {
+        this(user, slug, publishedAt, null);
+    }
+
+    public Catalog(String slug, LocalDateTime publishedAt) {
+        this(null, slug, publishedAt);
     }
 
     public Catalog(String slug) {
-        this.slug = slug;
+        this(slug, null);
     }
 
-    public Catalog(String slug, ZonedDateTime publishedAt) {
-        this.slug = slug;
-        this.publishedAt = publishedAt;
+    public Catalog() {
     }
 
     @Override

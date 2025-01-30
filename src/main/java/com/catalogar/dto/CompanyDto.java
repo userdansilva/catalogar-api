@@ -1,5 +1,6 @@
 package com.catalogar.dto;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record CompanyDto(
@@ -7,7 +8,7 @@ public record CompanyDto(
         String name,
         String siteUrl,
         String logoUrl,
-        String createdAt,
-        String updatedAt
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
 ) {
 }

@@ -5,6 +5,7 @@ import com.catalogar.exception.ResourceNotFoundException;
 import com.catalogar.exception.UniqueFieldConflictException;
 import com.catalogar.mapper.CatalogMapper;
 import com.catalogar.model.Catalog;
+import com.catalogar.model.User;
 import com.catalogar.repository.CatalogRepository;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +29,7 @@ public class CatalogService {
                 ));
     }
 
-    public Catalog create(CatalogRequestDto requestDto) {
+    public Catalog create(User user, CatalogRequestDto requestDto) {
         boolean existsBySlug = catalogRepository
                 .existsBySlug(requestDto.slug());
 
@@ -38,7 +39,7 @@ public class CatalogService {
             );
         }
 
-        Catalog catalog = catalogMapper.toCatalog(requestDto);
+        Catalog catalog = catalogMapper.toCatalog(user, requestDto);
 
         return catalogRepository.save(catalog);
     }

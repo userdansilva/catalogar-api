@@ -1,15 +1,15 @@
 package com.catalogar.dto;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record CatalogDto(
         UUID id,
-        UUID slug,
-        UUID publishedAt,
+        String slug,
+        LocalDateTime publishedAt,
         boolean isPublished,
-        ZonedDateTime createdAt,
-        ZonedDateTime updatedAt,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt,
         CompanyDto company
 ) {
 }
