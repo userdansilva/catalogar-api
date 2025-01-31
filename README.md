@@ -1,1 +1,1 @@
-![Catalogar](https://github.com/userProfile-attachments/assets/ca1665c1-3e7e-40d8-9d0b-5cbc9b7f724f)
+![Catalogar](https://github.com/user-attachments/assets/9b9277d1-eae0-4d2a-9339-86e516a17866)
