@@ -45,4 +45,8 @@ public class CatalogController {
         return ResponseEntity.ok()
                 .body(catalogMapper.toApiResponse(catalog));
     }
+
+    // Publish Catalog
+
+    // Update Slug
 }

@@ -27,7 +27,8 @@ public class CatalogarApplication {
 		return args -> {
 			UserRequestDto user = new UserRequestDto(
 					"Daniel Sousa",
-					"daniel.sousa@catalogar.com.br"
+					"daniel.sousa@catalogar.com.br",
+					"(77) 98877-6655"
 			);
 
 			userService.create(user);

@@ -9,6 +9,8 @@ public record UserRequestDto(
 
         @NotEmpty(message = "Email do usuário é obrigatório")
         @Email(message = "Formato de email inválido. Formatos válidos: meu.exemplo@minhaempresa.com.br, exemplo@gmail.com")
-        String email
+        String email,
+
+        String phoneNumber
 ) {
 }

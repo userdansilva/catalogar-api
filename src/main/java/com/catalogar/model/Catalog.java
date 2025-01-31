@@ -69,7 +69,7 @@ public class Catalog {
 
     @ManyToOne(
             cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER
+            fetch = FetchType.LAZY
     )
     @JoinColumn(
             name = "user_id",

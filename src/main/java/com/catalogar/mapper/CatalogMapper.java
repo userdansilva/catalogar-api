@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.util.Optional;
 
 @Component
 public class CatalogMapper {
@@ -40,14 +41,17 @@ public class CatalogMapper {
     }
 
     public CatalogDto toDto(Catalog catalog) {
-        CompanyDto companyDto = companyMapper
-                .toDto(catalog.getCompany());
+        CompanyDto companyDto = Optional.ofNullable(catalog.getCompany())
+                .map(companyMapper::toDto)
+                .orElse(null);
+
+        boolean isPublished = catalog.getPublishedAt() != null;
 
         return new CatalogDto(
                 catalog.getId(),
                 catalog.getSlug(),
                 catalog.getPublishedAt(),
-                catalog.getPublishedAt() != null,
+                isPublished,
                 catalog.getCreatedAt(),
                 catalog.getUpdatedAt(),
                 companyDto
