@@ -37,6 +37,10 @@ public class UserService {
                 ));
     }
 
+    public User create(User user) {
+        return this.create(userMapper.toRequestDto(user));
+    }
+
     public User create(UserRequestDto userRequestDto) {
         boolean existsByEmail = userRepository
                 .existsByEmail(userRequestDto.email());

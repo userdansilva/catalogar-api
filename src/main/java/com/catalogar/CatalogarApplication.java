@@ -1,6 +1,7 @@
 package com.catalogar;
 
 import com.catalogar.dto.UserRequestDto;
+import com.catalogar.service.AuthenticationService;
 import com.catalogar.service.CatalogService;
 import com.catalogar.service.CompanyService;
 import com.catalogar.service.UserService;
@@ -22,16 +23,18 @@ public class CatalogarApplication {
 	CommandLineRunner commandLineRunner(
 			CatalogService catalogService,
 			CompanyService companyService,
-			UserService userService
+			UserService userService,
+			AuthenticationService authenticationService
 	) {
 		return args -> {
 			UserRequestDto user = new UserRequestDto(
 					"Daniel Sousa",
 					"daniel.sousa@catalogar.com.br",
+					"password",
 					"(77) 98877-6655"
 			);
 
-			userService.create(user);
+			authenticationService.signup(user);
 
 //			Catalog catalog = new Catalog(
 //				"catalogar",

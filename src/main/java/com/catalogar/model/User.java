@@ -4,12 +4,12 @@ import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Entity(name = "User")
 @EntityListeners(AuditingEntityListener.class)
@@ -22,7 +22,7 @@ import java.util.UUID;
                 )
         }
 )
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -101,12 +101,18 @@ public class User {
     )
     private UUID currentCatalogId;
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
     public User() {
     }
 
-    public User(String name, String email, String phoneNumber) {
+    public User(String name, String email, String password, String phoneNumber) {
         this.name = name;
         this.email = email;
+        this.password = password;
         this.phoneNumber = phoneNumber;
     }
 
@@ -172,6 +178,21 @@ public class User {
 
     public void setCurrentCatalogId(UUID currentCatalogId) {
         this.currentCatalogId = currentCatalogId;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return Optional.ofNullable(disabledAt).isEmpty();
     }
 
     @Override

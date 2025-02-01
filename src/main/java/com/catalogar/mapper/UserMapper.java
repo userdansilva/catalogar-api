@@ -21,6 +21,7 @@ public class UserMapper {
         return new User(
                 userRequestDto.name(),
                 userRequestDto.email(),
+                userRequestDto.password(),
                 userRequestDto.phoneNumber()
         );
     }
@@ -45,6 +46,15 @@ public class UserMapper {
                 catalogDtoList,
                 user.getCreatedAt(),
                 user.getUpdatedAt()
+        );
+    }
+
+    public UserRequestDto toRequestDto(User user) {
+        return new UserRequestDto(
+                user.getName(),
+                user.getEmail(),
+                user.getPassword(),
+                user.getPhoneNumber()
         );
     }
 }
