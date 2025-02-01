@@ -40,7 +40,7 @@ public class CatalogController {
         String email = "daniel.sousa@catalogar.com.br";
         User user = userService.getByEmail(email);
 
-        Catalog catalog = catalogService.create(user, catalogRequestDto);
+        Catalog catalog = catalogService.create(catalogRequestDto, user);
 
         return ResponseEntity.ok()
                 .body(catalogMapper.toApiResponse(catalog));

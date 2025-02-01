@@ -4,6 +4,7 @@ import com.catalogar.dto.UserRequestDto;
 import com.catalogar.exception.ResourceNotFoundException;
 import com.catalogar.exception.UniqueFieldConflictException;
 import com.catalogar.mapper.UserMapper;
+import com.catalogar.model.Catalog;
 import com.catalogar.model.User;
 import com.catalogar.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -49,5 +50,11 @@ public class UserService {
         User user = userMapper.toUser(userRequestDto);
 
         return userRepository.save(user);
+    }
+
+    public void setCurrentCatalog(User user, Catalog catalog) {
+        user.setCurrentCatalogId(catalog.getId());
+
+        userRepository.save(user);
     }
 }

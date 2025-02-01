@@ -95,6 +95,12 @@ public class User {
     )
     private List<Catalog> catalogs;
 
+    @Column(
+            name = "current_catalog_id",
+            columnDefinition = "UUID"
+    )
+    private UUID currentCatalogId;
+
     public User() {
     }
 
@@ -160,15 +166,23 @@ public class User {
         this.catalogs = catalogs;
     }
 
+    public UUID getCurrentCatalogId() {
+        return currentCatalogId;
+    }
+
+    public void setCurrentCatalogId(UUID currentCatalogId) {
+        this.currentCatalogId = currentCatalogId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(email, user.email) && Objects.equals(createdAt, user.createdAt) && Objects.equals(updatedAt, user.updatedAt) && Objects.equals(catalogs, user.catalogs);
+        return Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(email, user.email) && Objects.equals(phoneNumber, user.phoneNumber) && Objects.equals(createdAt, user.createdAt) && Objects.equals(updatedAt, user.updatedAt) && Objects.equals(catalogs, user.catalogs) && Objects.equals(currentCatalogId, user.currentCatalogId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, email, createdAt, updatedAt, catalogs);
+        return Objects.hash(id, name, email, phoneNumber, createdAt, updatedAt, catalogs, currentCatalogId);
     }
 }
