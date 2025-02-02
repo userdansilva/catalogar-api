@@ -1,8 +1,8 @@
 package com.catalogar.user;
 
+import com.catalogar.catalog.Catalog;
 import com.catalogar.common.exception.ResourceNotFoundException;
 import com.catalogar.common.exception.UniqueFieldConflictException;
-import com.catalogar.catalog.Catalog;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -33,23 +33,17 @@ public class UserService {
                 ));
     }
 
-    public User create(User user) {
-        return this.create(userMapper.toRequestDto(user));
-    }
-
-    public User create(CreateUserRequest userRequestDto) {
+    public User create(CreateUserRequest request) {
         boolean existsByEmail = userRepository
-                .existsByEmail(userRequestDto.email());
+                .existsByEmail(request.email());
 
         if (existsByEmail) {
             throw new UniqueFieldConflictException(
-                    "Usuário com o email: " + userRequestDto.email() + " já está cadastrado"
+                    "Usuário com o email: " + request.email() + " já está cadastrado"
             );
         }
 
-        User user = userMapper.toUser(userRequestDto);
-
-        return userRepository.save(user);
+        return userRepository.save(userMapper.toUser(request));
     }
 
     public void setCurrentCatalog(User user, Catalog catalog) {

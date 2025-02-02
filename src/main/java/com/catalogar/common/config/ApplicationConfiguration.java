@@ -1,6 +1,6 @@
 package com.catalogar.common.config;
 
-import com.catalogar.user.UserService;
+import com.catalogar.user.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,11 +12,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
 public class ApplicationConfiguration {
-    private final UserService userService;
+    private final UserRepository userRepository;
 
-    public ApplicationConfiguration(UserService userService) {
-        this.userService = userService;
+    public ApplicationConfiguration(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
+
 
     @Bean
     public AuthenticationManager authenticationManager(
@@ -37,7 +38,9 @@ public class ApplicationConfiguration {
 
     @Bean
     UserDetailsService userDetailsService() {
-        return userService::getByEmail;
+        return email -> userRepository
+                .findByEmail(email)
+                .orElseThrow();
     }
 
     @Bean

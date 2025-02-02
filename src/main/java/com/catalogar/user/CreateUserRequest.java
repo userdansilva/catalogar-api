@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 
 public record CreateUserRequest(
-        @NotEmpty(message = "Nome do usuário é obrigatório")
+        @NotEmpty(message = "Nome é obrigatório")
         String name,
 
         @NotEmpty(message = "Email do usuário é obrigatório")

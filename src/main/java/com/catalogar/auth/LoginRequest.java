@@ -3,7 +3,7 @@ package com.catalogar.auth;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 
-public record LoginRequestDto(
+public record LoginRequest(
         @NotEmpty(message = "E-mail é obrigatório")
         @Email(message = "Formato de e-mail inválido. Formato válido: nome@exemplo.com")
         String email,
