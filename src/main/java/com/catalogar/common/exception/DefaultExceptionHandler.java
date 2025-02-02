@@ -1,5 +1,6 @@
 package com.catalogar.common.exception;
 
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -113,6 +114,22 @@ public class DefaultExceptionHandler {
         );
 
         return new ResponseEntity<ApiError>(apiError, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(JwtException.class)
+    public  ResponseEntity<ApiError> handle(
+            JwtException e,
+            HttpServletRequest request
+    ) {
+        ApiError apiError = new ApiError(
+                request.getRequestURI(),
+                "Sessão inválida ou expirada. Por favor, realize um novo login",
+                HttpStatus.UNAUTHORIZED.value(),
+                ZonedDateTime.now(),
+                List.of()
+        );
+
+        return new ResponseEntity<>(apiError, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(Exception.class)
