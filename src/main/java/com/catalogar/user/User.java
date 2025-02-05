@@ -96,11 +96,9 @@ public class User implements UserDetails {
     )
     private List<Catalog> catalogs = new ArrayList<>();
 
-    @Column(
-            name = "current_catalog_id",
-            columnDefinition = "UUID"
-    )
-    private UUID currentCatalogId;
+    @OneToOne
+    @JoinColumn(name = "current_catalog_id")
+    private Catalog currentCatalog;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -177,12 +175,12 @@ public class User implements UserDetails {
         this.catalogs = catalogs;
     }
 
-    public UUID getCurrentCatalogId() {
-        return currentCatalogId;
+    public Catalog getCurrentCatalog() {
+        return currentCatalog;
     }
 
-    public void setCurrentCatalogId(UUID currentCatalogId) {
-        this.currentCatalogId = currentCatalogId;
+    public void setCurrentCatalog(Catalog currentCatalog) {
+        this.currentCatalog = currentCatalog;
     }
 
     @Override
@@ -204,11 +202,11 @@ public class User implements UserDetails {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(email, user.email) && Objects.equals(phoneNumber, user.phoneNumber) && Objects.equals(createdAt, user.createdAt) && Objects.equals(updatedAt, user.updatedAt) && Objects.equals(catalogs, user.catalogs) && Objects.equals(currentCatalogId, user.currentCatalogId);
+        return Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(email, user.email) && Objects.equals(phoneNumber, user.phoneNumber) && Objects.equals(disabledAt, user.disabledAt) && Objects.equals(createdAt, user.createdAt) && Objects.equals(updatedAt, user.updatedAt) && Objects.equals(catalogs, user.catalogs) && Objects.equals(currentCatalog, user.currentCatalog);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, email, phoneNumber, createdAt, updatedAt, catalogs, currentCatalogId);
+        return Objects.hash(id, name, email, phoneNumber, disabledAt, createdAt, updatedAt, catalogs, currentCatalog);
     }
 }

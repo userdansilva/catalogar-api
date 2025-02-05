@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 
 public record CreateCatalogRequest(
         @NotEmpty(message = "Slug do catálogo é obrigatório")
-        @Slug(message = "Formato inválido para slug. Formatos válidos: canecas-premium, formaturify, bolos-da-julia-123")
+        @Slug(message = "Formato inválido para slug. Use apenas letras, hífens(-) e/ou números. Ex.: exemplo, meu-exemplo, meu-exemplo-123")
         String slug,
 
         boolean isActive

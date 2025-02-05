@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class UserMapper {
@@ -36,17 +37,22 @@ public class UserMapper {
     }
 
     public UserDto toDto(User user) {
-        List<CatalogDto> catalogDtoList = user.getCatalogs()
+        List<CatalogDto> catalogsDto = user.getCatalogs()
                 .stream()
                 .map(catalogMapper::toDto)
                 .toList();
+
+        CatalogDto currentCatalogDto = Optional.ofNullable(user.getCurrentCatalog())
+                .map(catalogMapper::toDto)
+                .orElse(null);
 
         return new UserDto(
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
                 user.getPhoneNumber(),
-                catalogDtoList,
+                catalogsDto,
+                currentCatalogDto,
                 user.getCreatedAt(),
                 user.getUpdatedAt()
         );

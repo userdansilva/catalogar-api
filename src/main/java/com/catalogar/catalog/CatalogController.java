@@ -5,6 +5,8 @@ import com.catalogar.user.User;
 import com.catalogar.user.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,12 +32,12 @@ public class CatalogController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<CatalogDto>> create(
-            @Valid @RequestBody CreateCatalogRequest catalogRequestDto
+            @Valid @RequestBody CreateCatalogRequest request,
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
-        String email = "daniel.sousa@catalogar.com.br";
-        User user = userService.getByEmail(email);
+        User user = userService.getByEmail(userDetails.getUsername());
 
-        Catalog catalog = catalogService.create(catalogRequestDto, user);
+        Catalog catalog = catalogService.create(request, user);
 
         return ResponseEntity.ok()
                 .body(catalogMapper.toApiResponse(catalog));

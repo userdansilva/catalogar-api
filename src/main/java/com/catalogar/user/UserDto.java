@@ -12,6 +12,7 @@ public record UserDto(
         String email,
         String phoneNumber,
         List<CatalogDto> catalogs,
+        CatalogDto currentCatalog,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {

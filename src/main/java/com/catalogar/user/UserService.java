@@ -47,7 +47,7 @@ public class UserService {
     }
 
     public void setCurrentCatalog(User user, Catalog catalog) {
-        user.setCurrentCatalogId(catalog.getId());
+        user.setCurrentCatalog(catalog);
 
         userRepository.save(user);
     }
