@@ -31,9 +31,9 @@ public class AuthenticationController {
 
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<UserDto>> register(
-            @Valid @RequestBody CreateUserRequest userRequestDto
+            @Valid @RequestBody CreateUserRequest request
     ) {
-        User user = authenticationService.signup(userRequestDto);
+        User user = authenticationService.signup(request);
 
         return ResponseEntity.ok()
                 .body(userMapper.toApiResponse(user));
@@ -41,11 +41,11 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginDto> authenticate(
-            @Valid @RequestBody LoginRequest loginRequestDto
+            @Valid @RequestBody LoginRequest request
     ) {
-        authenticationService.authenticate(loginRequestDto);
+        authenticationService.authenticate(request);
 
-        User user = userService.getByEmail(loginRequestDto.email());
+        User user = userService.getByEmail(request.email());
 
         LoginDto loginDto = new LoginDto(
                 jwtService.generateToken(user),
