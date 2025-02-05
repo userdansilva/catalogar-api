@@ -25,8 +25,7 @@ public class UserMapper {
         return new User(
                 request.name(),
                 request.email(),
-                encodedPassword,
-                request.phoneNumber()
+                encodedPassword
         );
     }
 

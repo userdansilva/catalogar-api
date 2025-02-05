@@ -94,7 +94,7 @@ public class User implements UserDetails {
             mappedBy = "user",
             orphanRemoval = true
     )
-    private List<Catalog> catalogs;
+    private List<Catalog> catalogs = new ArrayList<>();
 
     @Column(
             name = "current_catalog_id",
@@ -115,6 +115,10 @@ public class User implements UserDetails {
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
+    }
+
+    public User(String name, String email, String password) {
+        this(name, email, password, null);
     }
 
     public UUID getId() {
