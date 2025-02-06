@@ -34,18 +34,18 @@ public class CatalogService {
                 .toCatalog(user, request));
 
         // Must set the new catalog as current catalog on creation
-        userService.setCurrentCatalog(user, catalog);
+        userService.updateCurrentCatalog(user, catalog);
 
         return catalog;
     }
 
     public Catalog update(UpdateCatalogRequest request, User user) {
-        Catalog catalog = getByUser(user);
+        Catalog currentCatalog = getCurrentCatalogByUser(user);
 
-        boolean isSameSlug = catalog.getSlug()
+        boolean isSameSlug = currentCatalog.getSlug()
                 .equals(request.slug());
 
-        if (isSameSlug) return catalog;
+        if (isSameSlug) return currentCatalog;
 
         boolean existsBySlugAndIdNot = catalogRepository
                 .existsBySlugAndIdNot(
@@ -58,18 +58,21 @@ public class CatalogService {
             );
         }
 
-        catalog.setSlug(request.slug());
+        currentCatalog.setSlug(request.slug());
 
-        return catalogRepository.save(catalog);
+        return catalogRepository.save(currentCatalog);
     }
 
-    private Catalog getByUser(User user) {
-        UUID currentCatalogId = user.getCurrentCatalog().getId();
+    private Catalog getCurrentCatalogByUser(User user) {
+        return getByIdAndUser(user.getCurrentCatalog().getId(), user);
+    }
 
+    public Catalog getByIdAndUser(UUID id, User user) {
         return catalogRepository
-                .findByIdAndUserId(currentCatalogId, user.getId())
+                .findByIdAndUserId(id, user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Catálogo com id: " + currentCatalogId + " não encontrado"
+                        "Catálogo com id: " + id + " não encontrado"
                 ));
+
     }
 }

@@ -46,9 +46,22 @@ public class UserService {
         return userRepository.save(userMapper.toUser(request));
     }
 
-    public void setCurrentCatalog(User user, Catalog catalog) {
+    public User updateCurrentCatalog(User user, Catalog catalog) {
+        boolean isSameCurrentCatalog = isSameCurrentCatalog(user, catalog);
+
+        if (isSameCurrentCatalog) return user;
+
         user.setCurrentCatalog(catalog);
 
-        userRepository.save(user);
+        return userRepository.save(user);
     }
+
+    private boolean isSameCurrentCatalog(User user, Catalog catalog) {
+        if (user.getCurrentCatalog() == null) return false;
+
+        return user.getCurrentCatalog()
+                .getId()
+                .equals(catalog.getId());
+    }
+
 }
