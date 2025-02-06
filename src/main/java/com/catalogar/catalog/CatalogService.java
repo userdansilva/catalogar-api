@@ -20,26 +20,18 @@ public class CatalogService {
         this.userService = userService;
     }
 
-    public Catalog getById(UUID id) {
-        return catalogRepository
-                .findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                   "Catálogo com id: " + id + " não encontrado"
-                ));
-    }
-
-    public Catalog create(CreateCatalogRequest requestDto, User user) {
+    public Catalog create(CreateCatalogRequest request, User user) {
         boolean existsBySlug = catalogRepository
-                .existsBySlug(requestDto.slug());
+                .existsBySlug(request.slug());
 
         if (existsBySlug) {
             throw new UniqueFieldConflictException(
-                    "Catálogo com o slug: " + requestDto.slug() + " já está cadastrado"
+                    "Catálogo com o slug: " + request.slug() + " já está cadastrado"
             );
         }
 
         Catalog catalog = catalogRepository.save(catalogMapper
-                .toCatalog(user, requestDto));
+                .toCatalog(user, request));
 
         // Must set the new catalog as current catalog on creation
         userService.setCurrentCatalog(user, catalog);
@@ -47,7 +39,37 @@ public class CatalogService {
         return catalog;
     }
 
-    public boolean catalogBelongsToUser(Catalog catalog, User user) {
-        return catalog.getUser().getId().equals(user.getId());
+    public Catalog update(UpdateCatalogRequest request, User user) {
+        Catalog catalog = getByUser(user);
+
+        boolean isSameSlug = catalog.getSlug()
+                .equals(request.slug());
+
+        if (isSameSlug) return catalog;
+
+        boolean existsBySlugAndIdNot = catalogRepository
+                .existsBySlugAndIdNot(
+                        request.slug(),
+                        user.getCurrentCatalog().getId());
+
+        if (existsBySlugAndIdNot) {
+            throw new UniqueFieldConflictException(
+                    "Catálogo com o slug: " + request.slug() + " já está cadastrado"
+            );
+        }
+
+        catalog.setSlug(request.slug());
+
+        return catalogRepository.save(catalog);
+    }
+
+    private Catalog getByUser(User user) {
+        UUID currentCatalogId = user.getCurrentCatalog().getId();
+
+        return catalogRepository
+                .findByIdAndUserId(currentCatalogId, user.getId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Catálogo com id: " + currentCatalogId + " não encontrado"
+                ));
     }
 }
