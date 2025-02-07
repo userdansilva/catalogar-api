@@ -57,10 +57,12 @@ public class UserService {
     }
 
     private boolean isSameCurrentCatalog(User user, Catalog catalog) {
-        if (user.getCurrentCatalog() == null) return false;
+        Catalog currentCatalog = user.getCurrentCatalog()
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Catálogo atual não encontrado"
+                ));
 
-        return user.getCurrentCatalog()
-                .getId()
+        return currentCatalog.getId()
                 .equals(catalog.getId());
     }
 

@@ -33,14 +33,19 @@ public class CatalogService {
         Catalog catalog = catalogRepository.save(catalogMapper
                 .toCatalog(user, request));
 
-        // Must set the new catalog as current catalog on creation
+        /*
+         * When a catalog is created, it should be set as current catalog
+         */
         userService.updateCurrentCatalog(user, catalog);
 
         return catalog;
     }
 
     public Catalog update(UpdateCatalogRequest request, User user) {
-        Catalog currentCatalog = getCurrentCatalogByUser(user);
+        Catalog currentCatalog = user.getCurrentCatalog()
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Catálogo atual não encontrado"
+                ));
 
         boolean isSameSlug = currentCatalog.getSlug()
                 .equals(request.slug());
@@ -50,7 +55,7 @@ public class CatalogService {
         boolean existsBySlugAndIdNot = catalogRepository
                 .existsBySlugAndIdNot(
                         request.slug(),
-                        user.getCurrentCatalog().getId());
+                        currentCatalog.getId());
 
         if (existsBySlugAndIdNot) {
             throw new UniqueFieldConflictException(
@@ -61,10 +66,6 @@ public class CatalogService {
         currentCatalog.setSlug(request.slug());
 
         return catalogRepository.save(currentCatalog);
-    }
-
-    private Catalog getCurrentCatalogByUser(User user) {
-        return getByIdAndUser(user.getCurrentCatalog().getId(), user);
     }
 
     public Catalog getByIdAndUser(UUID id, User user) {
