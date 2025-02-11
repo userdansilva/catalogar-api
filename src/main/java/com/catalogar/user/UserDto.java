@@ -4,6 +4,7 @@ import com.catalogar.catalog.CatalogDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public record UserDto(
@@ -12,7 +13,7 @@ public record UserDto(
         String email,
         String phoneNumber,
         List<CatalogDto> catalogs,
-        CatalogDto currentCatalog,
+        Optional<CatalogDto> currentCatalog,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {

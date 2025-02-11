@@ -3,6 +3,7 @@ package com.catalogar.user;
 import com.catalogar.catalog.Catalog;
 import com.catalogar.common.exception.ResourceNotFoundException;
 import com.catalogar.common.exception.UniqueFieldConflictException;
+import com.catalogar.common.message.MessageService;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -11,10 +12,14 @@ import java.util.UUID;
 public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final MessageService messageService;
 
-    public UserService(UserRepository userRepository, UserMapper userMapper) {
+    public UserService(UserRepository userRepository,
+                       UserMapper userMapper,
+                       MessageService messageService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.messageService = messageService;
     }
 
     public User getById(UUID id) {
@@ -47,23 +52,15 @@ public class UserService {
     }
 
     public User updateCurrentCatalog(User user, Catalog catalog) {
-        boolean isSameCurrentCatalog = isSameCurrentCatalog(user, catalog);
-
-        if (isSameCurrentCatalog) return user;
-
         user.setCurrentCatalog(catalog);
 
         return userRepository.save(user);
     }
 
-    private boolean isSameCurrentCatalog(User user, Catalog catalog) {
-        Catalog currentCatalog = user.getCurrentCatalog()
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Catálogo atual não encontrado"
-                ));
-
-        return currentCatalog.getId()
-                .equals(catalog.getId());
+    public Catalog getUserCurrentCatalog(User user) {
+        return user.getCurrentCatalog()
+                .orElseThrow(() -> new ResourceNotFoundException(messageService
+                        .getMessage("error.catalog.current_catalog_not_found")));
     }
 
 }

@@ -7,6 +7,7 @@ import com.catalogar.user.User;
 import com.catalogar.user.UserService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -74,9 +75,7 @@ public class CatalogService {
     }
 
     private Catalog getUserCurrentCatalog(User user) {
-        return user.getCurrentCatalog()
-                .orElseThrow(() -> new ResourceNotFoundException(messageService
-                        .getMessage("error.catalog.current_catalog_not_found")));
+        return userService.getUserCurrentCatalog(user);
     }
 
     private boolean existsBySlug(String slug, UUID id) {
@@ -86,6 +85,17 @@ public class CatalogService {
 
     private Catalog updateCatalog(Catalog catalog, UpdateCatalogRequest request) {
         catalog.setSlug(request.slug());
+
+        boolean isPublishing = !catalog.isPublished() && request.isActive();
+        boolean isDrafting = catalog.isPublished() && !request.isActive();
+
+        if (isPublishing) {
+            catalog.setPublishedAt(LocalDateTime.now());
+        }
+
+        if (isDrafting) {
+            catalog.setPublishedAt(null);
+        }
 
         return catalogRepository.save(catalog);
     }
