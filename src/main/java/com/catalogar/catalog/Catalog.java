@@ -108,6 +108,10 @@ public class Catalog {
         this.publishedAt = publishedAt;
     }
 
+    public boolean isPublished() {
+        return publishedAt != null;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }

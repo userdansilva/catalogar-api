@@ -175,8 +175,8 @@ public class User implements UserDetails {
         this.catalogs = catalogs;
     }
 
-    public Catalog getCurrentCatalog() {
-        return currentCatalog;
+    public Optional<Catalog> getCurrentCatalog() {
+        return Optional.ofNullable(currentCatalog);
     }
 
     public void setCurrentCatalog(Catalog currentCatalog) {
