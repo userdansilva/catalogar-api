@@ -42,7 +42,7 @@ public class UserMapper {
                 .map(catalogMapper::toDto)
                 .toList();
 
-        Optional<CatalogDto> currentCatalogDto = user.getCurrentCatalog()
+        Optional<CatalogDto> currentCatalogDto = Optional.ofNullable(user.getCurrentCatalog())
                 .map(catalogMapper::toDto);
 
         return new UserDto(

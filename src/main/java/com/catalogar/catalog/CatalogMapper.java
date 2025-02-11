@@ -39,9 +39,8 @@ public class CatalogMapper {
     }
 
     public CatalogDto toDto(Catalog catalog) {
-        CompanyDto companyDto = Optional.ofNullable(catalog.getCompany())
-                .map(companyMapper::toDto)
-                .orElse(null);
+        Optional<CompanyDto> companyDto = Optional.ofNullable(catalog.getCompany())
+                .map(companyMapper::toDto);
 
         boolean isPublished = catalog.isPublished();
 

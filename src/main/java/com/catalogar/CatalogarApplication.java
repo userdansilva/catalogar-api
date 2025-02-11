@@ -12,23 +12,4 @@ public class CatalogarApplication {
 		SpringApplication.run(CatalogarApplication.class, args);
 	}
 
-//	@Bean
-//	CommandLineRunner commandLineRunner(
-//			CatalogService catalogService,
-//			CompanyService companyService,
-//			UserService userService,
-//			AuthenticationService authenticationService
-//	) {
-//		return args -> {
-//			CreateUserRequest user = new CreateUserRequest(
-//					"Daniel Sousa",
-//					"daniel.sousa@catalogar.com.br",
-//					"password"
-//			);
-//
-//			authenticationService.signup(user);
-//
-//			System.out.println("--- CommandLineRunner finished! ---");
-//		};
-//	}
 }
