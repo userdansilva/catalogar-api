@@ -136,6 +136,10 @@ public class Catalog {
         this.company = company;
     }
 
+    public boolean hasCompany() {
+        return company != null;
+    }
+
     public User getUser() {
         return user;
     }

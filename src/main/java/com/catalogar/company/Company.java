@@ -81,6 +81,13 @@ public class Company {
     )
     private Catalog catalog;
 
+    public Company(String name, String mainSiteUrl, String phoneNumber, String businessTypeDescription) {
+        this.name = name;
+        this.mainSiteUrl = mainSiteUrl;
+        this.phoneNumber = phoneNumber;
+        this.businessTypeDescription = businessTypeDescription;
+    }
+
     public Company() {
     }
 
