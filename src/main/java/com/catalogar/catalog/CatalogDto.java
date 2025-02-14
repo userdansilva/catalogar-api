@@ -3,6 +3,7 @@ package com.catalogar.catalog;
 import com.catalogar.company.CompanyDto;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 public record CatalogDto(
@@ -12,6 +13,6 @@ public record CatalogDto(
         boolean isPublished,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
-        CompanyDto company
+        Optional<CompanyDto> company
 ) {
 }

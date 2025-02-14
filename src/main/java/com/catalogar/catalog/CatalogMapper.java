@@ -19,7 +19,7 @@ public class CatalogMapper {
     }
 
     public Catalog toCatalog(User user, CreateCatalogRequest catalogRequestDto) {
-        LocalDateTime publishedAt = catalogRequestDto.isActive()
+        LocalDateTime publishedAt = catalogRequestDto.isPublished()
                 ? ZonedDateTime.now().toLocalDateTime()
                 : null;
 
@@ -39,11 +39,10 @@ public class CatalogMapper {
     }
 
     public CatalogDto toDto(Catalog catalog) {
-        CompanyDto companyDto = Optional.ofNullable(catalog.getCompany())
-                .map(companyMapper::toDto)
-                .orElse(null);
+        Optional<CompanyDto> companyDto = Optional.ofNullable(catalog.getCompany())
+                .map(companyMapper::toDto);
 
-        boolean isPublished = catalog.getPublishedAt() != null;
+        boolean isPublished = catalog.isPublished();
 
         return new CatalogDto(
                 catalog.getId(),

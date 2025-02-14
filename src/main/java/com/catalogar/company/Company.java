@@ -32,10 +32,10 @@ public class Company {
     private String name;
 
     @Column(
-            name = "site_url",
+            name = "main_site_url",
             columnDefinition = "TEXT"
     )
-    private String siteUrl;
+    private String mainSiteUrl;
 
     @Column(
             name = "phone_number",
@@ -44,10 +44,10 @@ public class Company {
     private String phoneNumber;
 
     @Column(
-            name = "logo_url",
+            name = "business_type_description",
             columnDefinition = "TEXT"
     )
-    private String logoUrl;
+    private String businessTypeDescription;
 
     @CreatedDate
     @Column(
@@ -81,30 +81,14 @@ public class Company {
     )
     private Catalog catalog;
 
+    public Company(String name, String mainSiteUrl, String phoneNumber, String businessTypeDescription) {
+        this.name = name;
+        this.mainSiteUrl = mainSiteUrl;
+        this.phoneNumber = phoneNumber;
+        this.businessTypeDescription = businessTypeDescription;
+    }
+
     public Company() {
-    }
-
-    public Company(String name, String siteUrl, String phoneNumber, String logoUrl) {
-        this.name = name;
-        this.siteUrl = siteUrl;
-        this.phoneNumber = phoneNumber;
-        this.logoUrl = logoUrl;
-    }
-
-    public Company(String name, String siteUrl, String phoneNumber, String logoUrl, Catalog catalog) {
-        this.name = name;
-        this.siteUrl = siteUrl;
-        this.phoneNumber = phoneNumber;
-        this.logoUrl = logoUrl;
-        this.catalog = catalog;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -115,12 +99,12 @@ public class Company {
         this.name = name;
     }
 
-    public String getSiteUrl() {
-        return siteUrl;
+    public String getMainSiteUrl() {
+        return mainSiteUrl;
     }
 
-    public void setSiteUrl(String siteUrl) {
-        this.siteUrl = siteUrl;
+    public void setMainSiteUrl(String mainSiteUrl) {
+        this.mainSiteUrl = mainSiteUrl;
     }
 
     public String getPhoneNumber() {
@@ -131,12 +115,12 @@ public class Company {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getLogoUrl() {
-        return logoUrl;
+    public String getBusinessTypeDescription() {
+        return businessTypeDescription;
     }
 
-    public void setLogoUrl(String logoUrl) {
-        this.logoUrl = logoUrl;
+    public void setBusinessTypeDescription(String businessTypeDescription) {
+        this.businessTypeDescription = businessTypeDescription;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -167,25 +151,11 @@ public class Company {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Company company = (Company) o;
-        return Objects.equals(id, company.id) && Objects.equals(name, company.name) && Objects.equals(siteUrl, company.siteUrl) && Objects.equals(phoneNumber, company.phoneNumber) && Objects.equals(logoUrl, company.logoUrl);
+        return Objects.equals(name, company.name) && Objects.equals(mainSiteUrl, company.mainSiteUrl) && Objects.equals(phoneNumber, company.phoneNumber) && Objects.equals(businessTypeDescription, company.businessTypeDescription) && Objects.equals(createdAt, company.createdAt) && Objects.equals(updatedAt, company.updatedAt) && Objects.equals(catalog, company.catalog);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, siteUrl, phoneNumber, logoUrl);
-    }
-
-    @Override
-    public String toString() {
-        return "Company{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", siteUrl='" + siteUrl + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", logoUrl='" + logoUrl + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                ", catalog=" + catalog +
-                '}';
+        return Objects.hash(name, mainSiteUrl, phoneNumber, businessTypeDescription, createdAt, updatedAt, catalog);
     }
 }

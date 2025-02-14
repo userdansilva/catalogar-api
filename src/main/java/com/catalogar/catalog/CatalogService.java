@@ -86,8 +86,8 @@ public class CatalogService {
     private Catalog updateCatalog(Catalog catalog, UpdateCatalogRequest request) {
         catalog.setSlug(request.slug());
 
-        boolean isPublishing = !catalog.isPublished() && request.isActive();
-        boolean isDrafting = catalog.isPublished() && !request.isActive();
+        boolean isPublishing = !catalog.isPublished() && request.isPublished();
+        boolean isDrafting = catalog.isPublished() && !request.isPublished();
 
         if (isPublishing) {
             catalog.setPublishedAt(LocalDateTime.now());

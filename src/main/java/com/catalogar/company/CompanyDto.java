@@ -1,13 +1,12 @@
 package com.catalogar.company;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 public record CompanyDto(
-        UUID id,
         String name,
-        String siteUrl,
-        String logoUrl,
+        String mainSiteUrl,
+        String phoneNumber,
+        String businessTypeDescription,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {

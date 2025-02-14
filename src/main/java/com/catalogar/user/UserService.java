@@ -6,6 +6,7 @@ import com.catalogar.common.exception.UniqueFieldConflictException;
 import com.catalogar.common.message.MessageService;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -26,7 +27,7 @@ public class UserService {
         return userRepository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Usuário com o id: " + id + " não encontrado"
+                        messageService.getMessage("error.user.not_found")
                 ));
     }
 
@@ -34,7 +35,7 @@ public class UserService {
         return userRepository
                 .findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Usuário com o email: " + email + " não encontrado"
+                        messageService.getMessage("error.user.not_found")
                 ));
     }
 
@@ -44,7 +45,8 @@ public class UserService {
 
         if (existsByEmail) {
             throw new UniqueFieldConflictException(
-                    "Usuário com o email: " + request.email() + " já está cadastrado"
+                    messageService.getMessage("error.user.email_unavailable",
+                            request.email())
             );
         }
 
@@ -58,7 +60,7 @@ public class UserService {
     }
 
     public Catalog getUserCurrentCatalog(User user) {
-        return user.getCurrentCatalog()
+        return Optional.ofNullable(user.getCurrentCatalog())
                 .orElseThrow(() -> new ResourceNotFoundException(messageService
                         .getMessage("error.catalog.current_catalog_not_found")));
     }

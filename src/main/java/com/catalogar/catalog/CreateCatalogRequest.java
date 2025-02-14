@@ -8,6 +8,6 @@ public record CreateCatalogRequest(
         @Slug(message = "Formato inválido para slug. Use apenas letras, hífens(-) e/ou números. Ex.: exemplo, meu-exemplo, meu-exemplo-123")
         String slug,
 
-        boolean isActive
-){
+        boolean isPublished
+) {
 }
