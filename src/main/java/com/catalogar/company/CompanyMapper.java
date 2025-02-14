@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CompanyMapper {
-    public Company toCompany(CreateCompanyRequest request) {
+    public Company toCompany(CompanyRequest request) {
         return new Company(
                 request.name(),
                 request.mainSiteUrl(),

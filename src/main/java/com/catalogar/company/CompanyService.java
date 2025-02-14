@@ -1,6 +1,7 @@
 package com.catalogar.company;
 
 import com.catalogar.catalog.Catalog;
+import com.catalogar.common.exception.ResourceNotFoundException;
 import com.catalogar.common.exception.UniqueFieldConflictException;
 import com.catalogar.common.message.MessageService;
 import com.catalogar.user.User;
@@ -21,7 +22,7 @@ public class CompanyService {
         this.companyMapper = companyMapper;
     }
 
-    public Company create(CreateCompanyRequest request, User user) {
+    public Company create(CompanyRequest request, User user) {
         Catalog currentCatalog = getUserCurrentCatalog(user);
         boolean hasCompany = currentCatalog.hasCompany();
 
@@ -38,10 +39,34 @@ public class CompanyService {
         return userService.getUserCurrentCatalog(user);
     }
 
-    private Company createCompany(CreateCompanyRequest request, Catalog catalog) {
+    private Company createCompany(CompanyRequest request, Catalog catalog) {
         Company company = companyMapper.toCompany(request);
         company.setCatalog(catalog);
 
         return companyRepository.save(company);
     }
+
+    public Company update(CompanyRequest request, User user) {
+        Catalog currentCatalog = getUserCurrentCatalog(user);
+        boolean hasCompany = currentCatalog.hasCompany();
+
+        if (!hasCompany) {
+            throw new ResourceNotFoundException(
+                    messageService.getMessage("error.company.not_found")
+            );
+        }
+
+        return updateCompany(request,
+                currentCatalog.getCompany());
+    }
+
+    private Company updateCompany(CompanyRequest request, Company company) {
+        company.setName(request.name());
+        company.setMainSiteUrl(request.mainSiteUrl());
+        company.setPhoneNumber(request.phoneNumber());
+        company.setBusinessTypeDescription(request.businessTypeDescription());
+
+        return companyRepository.save(company);
+    }
+
 }

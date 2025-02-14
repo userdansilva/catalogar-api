@@ -3,7 +3,7 @@ package com.catalogar.company;
 import com.catalogar.common.validation.Url;
 import jakarta.validation.constraints.NotEmpty;
 
-public record CreateCompanyRequest(
+public record CompanyRequest(
     @NotEmpty(message = "Nome da empresa é obrigatório")
     String name,
 
