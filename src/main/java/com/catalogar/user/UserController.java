@@ -2,11 +2,12 @@ package com.catalogar.user;
 
 import com.catalogar.catalog.Catalog;
 import com.catalogar.catalog.CatalogService;
+import com.catalogar.common.config.Utilities;
 import com.catalogar.common.dto.ApiResponse;
-import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -30,22 +31,21 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<UserDto>> getAuthenticatedUser(
-            @AuthenticationPrincipal UserDetails userDetails
+            @AuthenticationPrincipal Jwt jwt
     ) {
-        User user = userService.getByEmail(userDetails.getUsername());
+        // how to get the user email
+
+        if (jwt == null) {
+            System.out.println("jwt is null");
+        } else {
+            System.out.println("jwt is not null");
+            System.out.println(Utilities.filterClaims(jwt));
+        }
+
+        User user = userService.getByEmail("daniel.sousa@catalogar.com.br");
 
         return ResponseEntity.ok()
                 .body(userMapper.toApiResponse(user));
-    }
-
-    @PostMapping
-    public ResponseEntity<ApiResponse<UserDto>> create(
-            @Valid @RequestBody CreateUserRequest userRequestDto
-    ) {
-         User user = userService.create(userRequestDto);
-
-         return ResponseEntity.ok()
-                 .body(userMapper.toApiResponse(user));
     }
 
     @PutMapping("/me/current-catalog/{catalogId}")

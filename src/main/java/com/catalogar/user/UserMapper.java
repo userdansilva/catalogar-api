@@ -3,7 +3,6 @@ package com.catalogar.user;
 import com.catalogar.catalog.CatalogDto;
 import com.catalogar.catalog.CatalogMapper;
 import com.catalogar.common.dto.ApiResponse;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -12,22 +11,9 @@ import java.util.Optional;
 @Component
 public class UserMapper {
     private final CatalogMapper catalogMapper;
-    private final PasswordEncoder passwordEncoder;
 
-    public UserMapper(CatalogMapper catalogMapper, PasswordEncoder passwordEncoder) {
+    public UserMapper(CatalogMapper catalogMapper) {
         this.catalogMapper = catalogMapper;
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    public User toUser(CreateUserRequest request) {
-        String encodedPassword = passwordEncoder
-                .encode(request.password());
-
-        return new User(
-                request.name(),
-                request.email(),
-                encodedPassword
-        );
     }
 
     public ApiResponse<UserDto> toApiResponse(User user) {

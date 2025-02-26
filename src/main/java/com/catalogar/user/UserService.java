@@ -2,7 +2,6 @@ package com.catalogar.user;
 
 import com.catalogar.catalog.Catalog;
 import com.catalogar.common.exception.ResourceNotFoundException;
-import com.catalogar.common.exception.UniqueFieldConflictException;
 import com.catalogar.common.message.MessageService;
 import org.springframework.stereotype.Service;
 
@@ -12,14 +11,11 @@ import java.util.UUID;
 @Service
 public class UserService {
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
     private final MessageService messageService;
 
     public UserService(UserRepository userRepository,
-                       UserMapper userMapper,
                        MessageService messageService) {
         this.userRepository = userRepository;
-        this.userMapper = userMapper;
         this.messageService = messageService;
     }
 
@@ -37,20 +33,6 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         messageService.getMessage("error.user.not_found")
                 ));
-    }
-
-    public User create(CreateUserRequest request) {
-        boolean existsByEmail = userRepository
-                .existsByEmail(request.email());
-
-        if (existsByEmail) {
-            throw new UniqueFieldConflictException(
-                    messageService.getMessage("error.user.email_unavailable",
-                            request.email())
-            );
-        }
-
-        return userRepository.save(userMapper.toUser(request));
     }
 
     public User updateCurrentCatalog(User user, Catalog catalog) {
