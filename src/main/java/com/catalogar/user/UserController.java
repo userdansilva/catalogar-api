@@ -38,8 +38,10 @@ public class UserController {
         if (jwt == null) {
             System.out.println("jwt is null");
         } else {
-            System.out.println("jwt is not null");
-            System.out.println(Utilities.filterClaims(jwt));
+            System.out.println(Utilities.filterClaims(jwt).get("sub"));
+            System.out.println(Utilities.filterClaims(jwt).get("name"));
+            System.out.println(Utilities.filterClaims(jwt).get("email"));
+            System.out.println(jwt.getClaims());
         }
 
         User user = userService.getByEmail("daniel.sousa@catalogar.com.br");

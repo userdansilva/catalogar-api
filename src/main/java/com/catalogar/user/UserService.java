@@ -35,6 +35,10 @@ public class UserService {
                 ));
     }
 
+//    private createUser() {
+//
+//    }
+
     public User updateCurrentCatalog(User user, Catalog catalog) {
         user.setCurrentCatalog(catalog);
 
