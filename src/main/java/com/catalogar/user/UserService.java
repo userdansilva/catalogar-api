@@ -1,8 +1,10 @@
 package com.catalogar.user;
 
 import com.catalogar.catalog.Catalog;
+import com.catalogar.common.config.Utilities;
 import com.catalogar.common.exception.ResourceNotFoundException;
 import com.catalogar.common.message.MessageService;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -35,9 +37,18 @@ public class UserService {
                 ));
     }
 
-//    private createUser() {
-//
-//    }
+    public User getByJwtOrCreate(Jwt jwt) {
+        UUID id = UUID.fromString(Utilities.filterClaims(jwt).get("sub"));
+        String name = Utilities.filterClaims(jwt).get("name");
+        String email = Utilities.filterClaims(jwt).get("email");
+
+        return userRepository.findById(id)
+                .orElseGet(() -> create(new User(id, name, email)));
+    }
+
+    private User create(User user) {
+        return userRepository.save(user);
+    }
 
     public User updateCurrentCatalog(User user, Catalog catalog) {
         user.setCurrentCatalog(catalog);

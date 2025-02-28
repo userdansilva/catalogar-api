@@ -2,7 +2,6 @@ package com.catalogar.user;
 
 import com.catalogar.catalog.Catalog;
 import com.catalogar.catalog.CatalogService;
-import com.catalogar.common.config.Utilities;
 import com.catalogar.common.dto.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -33,18 +32,7 @@ public class UserController {
     public ResponseEntity<ApiResponse<UserDto>> getAuthenticatedUser(
             @AuthenticationPrincipal Jwt jwt
     ) {
-        // how to get the user email
-
-        if (jwt == null) {
-            System.out.println("jwt is null");
-        } else {
-            System.out.println(Utilities.filterClaims(jwt).get("sub"));
-            System.out.println(Utilities.filterClaims(jwt).get("name"));
-            System.out.println(Utilities.filterClaims(jwt).get("email"));
-            System.out.println(jwt.getClaims());
-        }
-
-        User user = userService.getByEmail("daniel.sousa@catalogar.com.br");
+        User user = userService.getByJwtOrCreate(jwt);
 
         return ResponseEntity.ok()
                 .body(userMapper.toApiResponse(user));

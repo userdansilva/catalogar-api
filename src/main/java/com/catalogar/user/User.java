@@ -26,7 +26,6 @@ import java.util.UUID;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(
             name = "id",
             updatable = false,
@@ -83,6 +82,12 @@ public class User {
     private Catalog currentCatalog;
 
     public User() {
+    }
+
+    public User(UUID id, String name, String email) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
     }
 
     public User(String name, String email, String phoneNumber) {
