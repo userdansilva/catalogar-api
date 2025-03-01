@@ -6,7 +6,7 @@ import com.catalogar.user.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -30,9 +30,9 @@ public class CatalogController {
     @PostMapping
     public ResponseEntity<ApiResponse<CatalogDto>> create(
             @Valid @RequestBody CreateCatalogRequest request,
-            @AuthenticationPrincipal UserDetails userDetails
+            @AuthenticationPrincipal Jwt jwt
     ) {
-        User user = userService.getByEmail(userDetails.getUsername());
+        User user = userService.getByJwtOrCreate(jwt);
 
         Catalog catalog = catalogService.create(request, user);
 
@@ -43,9 +43,9 @@ public class CatalogController {
     @PutMapping
     public ResponseEntity<ApiResponse<CatalogDto>> update(
             @Valid @RequestBody UpdateCatalogRequest request,
-            @AuthenticationPrincipal UserDetails userDetails
+            @AuthenticationPrincipal Jwt jwt
     ) {
-        User user = userService.getByEmail(userDetails.getUsername());
+        User user = userService.getByJwtOrCreate(jwt);
 
         Catalog catalog = catalogService.update(request, user);
 

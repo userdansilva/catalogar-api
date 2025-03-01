@@ -2,11 +2,9 @@ package com.catalogar.user;
 
 import com.catalogar.catalog.Catalog;
 import com.catalogar.catalog.CatalogService;
-import com.catalogar.common.config.Utilities;
 import com.catalogar.common.dto.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,16 +31,7 @@ public class UserController {
     public ResponseEntity<ApiResponse<UserDto>> getAuthenticatedUser(
             @AuthenticationPrincipal Jwt jwt
     ) {
-        // how to get the user email
-
-        if (jwt == null) {
-            System.out.println("jwt is null");
-        } else {
-            System.out.println("jwt is not null");
-            System.out.println(Utilities.filterClaims(jwt));
-        }
-
-        User user = userService.getByEmail("daniel.sousa@catalogar.com.br");
+        User user = userService.getByJwtOrCreate(jwt);
 
         return ResponseEntity.ok()
                 .body(userMapper.toApiResponse(user));
@@ -51,9 +40,9 @@ public class UserController {
     @PutMapping("/me/current-catalog/{catalogId}")
     public ResponseEntity<ApiResponse<UserDto>> updateCurrentCatalog(
             @PathVariable UUID catalogId,
-            @AuthenticationPrincipal UserDetails userDetails
+            @AuthenticationPrincipal Jwt jwt
     ) {
-        User user = userService.getByEmail(userDetails.getUsername());
+        User user = userService.getByJwtOrCreate(jwt);
         Catalog catalog = catalogService.getByIdAndUser(catalogId, user);
 
         User userWithUpdatedCurrentCatalog = userService.updateCurrentCatalog(user, catalog);

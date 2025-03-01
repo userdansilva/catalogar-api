@@ -13,13 +13,21 @@ public class Utilities {
     }
 
     public static Map<String, String> filterClaims(Jwt jwt) {
-        final String[] claimKeys = {"sub", "aud", "ver", "iss", "name", "oid", "emails"};
+        final String[] claimKeys = {"sub", "aud", "ver", "iss", "name", "oid", "email"};
         final List<String> includeClaims = Arrays.asList(claimKeys);
 
         Map<String,String> filteredClaims = new HashMap<>();
         Map<String, Object> claims = jwt.getClaims();
 
         includeClaims.forEach(claim -> {
+            if (claim.equals("email")) {
+                List<String> emails = jwt.getClaim("emails");
+                String email = emails.get(0);
+
+                filteredClaims.put(claim, email);
+                return;
+            }
+
             if (claims.containsKey(claim)) {
                 filteredClaims.put(claim, claims.get(claim).toString());
             }

@@ -5,12 +5,12 @@ import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 @Entity(name = "User")
 @EntityListeners(AuditingEntityListener.class)
@@ -23,10 +23,9 @@ import java.util.*;
                 )
         }
 )
-public class User implements UserDetails {
+public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(
             name = "id",
             updatable = false,
@@ -50,28 +49,10 @@ public class User implements UserDetails {
     private String email;
 
     @Column(
-            name = "password",
-            columnDefinition = "TEXT"
-    )
-    private String password;
-
-    @Column(
             name = "phone_number",
             columnDefinition = "TEXT"
     )
     private String phoneNumber;
-
-    @Column(
-            name = "disable_reason",
-            columnDefinition = "TEXT"
-    )
-    private String disableReason;
-
-    @Column(
-            name = "disabled_at",
-            columnDefinition = "TIMESTAMP WITH TIME ZONE"
-    )
-    private ZonedDateTime disabledAt;
 
     @CreatedDate
     @Column(
@@ -100,23 +81,23 @@ public class User implements UserDetails {
     @JoinColumn(name = "current_catalog_id")
     private Catalog currentCatalog;
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
-    }
-
     public User() {
     }
 
-    public User(String name, String email, String password, String phoneNumber) {
+    public User(UUID id, String name, String email) {
+        this.id = id;
         this.name = name;
         this.email = email;
-        this.password = password;
+    }
+
+    public User(String name, String email, String phoneNumber) {
+        this.name = name;
+        this.email = email;
         this.phoneNumber = phoneNumber;
     }
 
-    public User(String name, String email, String password) {
-        this(name, email, password, null);
+    public User(String name, String email) {
+        this(name, email, null);
     }
 
     public UUID getId() {
@@ -184,29 +165,14 @@ public class User implements UserDetails {
     }
 
     @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return Optional.ofNullable(disabledAt).isEmpty();
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(email, user.email) && Objects.equals(phoneNumber, user.phoneNumber) && Objects.equals(disabledAt, user.disabledAt) && Objects.equals(createdAt, user.createdAt) && Objects.equals(updatedAt, user.updatedAt) && Objects.equals(catalogs, user.catalogs) && Objects.equals(currentCatalog, user.currentCatalog);
+        return Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(email, user.email) && Objects.equals(phoneNumber, user.phoneNumber) && Objects.equals(createdAt, user.createdAt) && Objects.equals(updatedAt, user.updatedAt) && Objects.equals(catalogs, user.catalogs) && Objects.equals(currentCatalog, user.currentCatalog);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, email, phoneNumber, disabledAt, createdAt, updatedAt, catalogs, currentCatalog);
+        return Objects.hash(id, name, email, phoneNumber, createdAt, updatedAt, catalogs, currentCatalog);
     }
 }

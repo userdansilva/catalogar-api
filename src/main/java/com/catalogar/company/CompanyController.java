@@ -6,7 +6,7 @@ import com.catalogar.user.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,9 +25,9 @@ public class CompanyController {
     @PostMapping
     public ResponseEntity<ApiResponse<CompanyDto>> create(
             @Valid @RequestBody CompanyRequest request,
-            @AuthenticationPrincipal UserDetails userDetails
+            @AuthenticationPrincipal Jwt jwt
     ) {
-        User user = userService.getByEmail(userDetails.getUsername());
+        User user = userService.getByJwtOrCreate(jwt);
 
         Company company = companyService.create(request, user);
 
@@ -38,9 +38,9 @@ public class CompanyController {
     @PutMapping
     public ResponseEntity<ApiResponse<CompanyDto>> update(
         @Valid @RequestBody CompanyRequest request,
-        @AuthenticationPrincipal UserDetails userDetails
+        @AuthenticationPrincipal Jwt jwt
     ) {
-        User user = userService.getByEmail(userDetails.getUsername());
+        User user = userService.getByJwtOrCreate(jwt);
 
         Company company = companyService.update(request, user);
 
