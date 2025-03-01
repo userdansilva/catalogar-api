@@ -1,6 +1,7 @@
 package com.catalogar.catalog;
 
 import com.catalogar.company.CompanyDto;
+import com.catalogar.theme.ThemeDto;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -13,6 +14,7 @@ public record CatalogDto(
         boolean isPublished,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
-        Optional<CompanyDto> company
+        Optional<CompanyDto> company,
+        Optional<ThemeDto> theme
 ) {
 }

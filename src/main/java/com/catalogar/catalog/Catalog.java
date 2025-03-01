@@ -1,6 +1,7 @@
 package com.catalogar.catalog;
 
 import com.catalogar.company.Company;
+import com.catalogar.theme.Theme;
 import com.catalogar.user.User;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -68,6 +69,12 @@ public class Catalog {
             orphanRemoval = true
     )
     private Company company;
+
+    @OneToOne(
+            mappedBy = "catalog",
+            orphanRemoval = true
+    )
+    private Theme theme;
 
     @ManyToOne(
             cascade = CascadeType.ALL,
@@ -138,6 +145,18 @@ public class Catalog {
 
     public boolean hasCompany() {
         return company != null;
+    }
+
+    public Theme getTheme() {
+        return theme;
+    }
+
+    public void setTheme(Theme theme) {
+        this.theme = theme;
+    }
+
+    public boolean hasTheme() {
+        return theme != null;
     }
 
     public User getUser() {
