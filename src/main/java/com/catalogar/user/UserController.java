@@ -5,7 +5,6 @@ import com.catalogar.catalog.CatalogService;
 import com.catalogar.common.dto.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,9 +40,9 @@ public class UserController {
     @PutMapping("/me/current-catalog/{catalogId}")
     public ResponseEntity<ApiResponse<UserDto>> updateCurrentCatalog(
             @PathVariable UUID catalogId,
-            @AuthenticationPrincipal UserDetails userDetails
+            @AuthenticationPrincipal Jwt jwt
     ) {
-        User user = userService.getByEmail(userDetails.getUsername());
+        User user = userService.getByJwtOrCreate(jwt);
         Catalog catalog = catalogService.getByIdAndUser(catalogId, user);
 
         User userWithUpdatedCurrentCatalog = userService.updateCurrentCatalog(user, catalog);
