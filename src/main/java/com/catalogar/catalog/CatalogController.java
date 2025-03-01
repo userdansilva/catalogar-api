@@ -4,13 +4,14 @@ import com.catalogar.common.dto.ApiResponse;
 import com.catalogar.user.User;
 import com.catalogar.user.UserService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/v1/catalogs")
+@RequestMapping("/api/v1/catalogs")
 public class CatalogController {
     private final CatalogService catalogService;
     private final CatalogMapper catalogMapper;
@@ -36,7 +37,7 @@ public class CatalogController {
 
         Catalog catalog = catalogService.create(request, user);
 
-        return ResponseEntity.ok()
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .body(catalogMapper.toApiResponse(catalog));
     }
 

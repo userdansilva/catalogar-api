@@ -4,13 +4,14 @@ import com.catalogar.common.dto.ApiResponse;
 import com.catalogar.user.User;
 import com.catalogar.user.UserService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/v1/companies")
+@RequestMapping("/api/v1/companies")
 public class CompanyController {
     private final UserService userService;
     private final CompanyService companyService;
@@ -31,7 +32,7 @@ public class CompanyController {
 
         Company company = companyService.create(request, user);
 
-        return ResponseEntity.ok()
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .body(companyMapper.toApiResponse(company));
     }
 
