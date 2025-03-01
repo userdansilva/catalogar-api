@@ -1,6 +1,7 @@
 package com.catalogar.catalog;
 
 import com.catalogar.company.Company;
+import com.catalogar.product.Product;
 import com.catalogar.theme.Theme;
 import com.catalogar.user.User;
 import jakarta.persistence.*;
@@ -9,6 +10,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -91,6 +94,12 @@ public class Catalog {
     )
     private User user;
 
+    @OneToMany(
+            mappedBy = "catalog",
+            orphanRemoval = true
+    )
+    private List<Product> products = new ArrayList<>();
+
     public UUID getId() {
         return id;
     }
@@ -163,6 +172,14 @@ public class Catalog {
         return user;
     }
 
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
+    }
+
     public Catalog(User user, String slug, LocalDateTime publishedAt, Company company) {
         this.user = user;
         this.slug = slug;
@@ -189,12 +206,12 @@ public class Catalog {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Catalog catalog = (Catalog) o;
-        return Objects.equals(id, catalog.id) && Objects.equals(slug, catalog.slug) && Objects.equals(publishedAt, catalog.publishedAt) && Objects.equals(createdAt, catalog.createdAt) && Objects.equals(updatedAt, catalog.updatedAt) && Objects.equals(company, catalog.company);
+        return Objects.equals(id, catalog.id) && Objects.equals(slug, catalog.slug) && Objects.equals(publishedAt, catalog.publishedAt) && Objects.equals(createdAt, catalog.createdAt) && Objects.equals(updatedAt, catalog.updatedAt) && Objects.equals(company, catalog.company) && Objects.equals(theme, catalog.theme) && Objects.equals(products, catalog.products);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, slug, publishedAt, createdAt, updatedAt, company);
+        return Objects.hash(id, slug, publishedAt, createdAt, updatedAt, company, theme, products);
     }
 
     @Override
