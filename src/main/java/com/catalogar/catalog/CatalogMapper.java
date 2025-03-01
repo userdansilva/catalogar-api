@@ -3,6 +3,8 @@ package com.catalogar.catalog;
 import com.catalogar.common.dto.ApiResponse;
 import com.catalogar.company.CompanyDto;
 import com.catalogar.company.CompanyMapper;
+import com.catalogar.theme.ThemeDto;
+import com.catalogar.theme.ThemeMapper;
 import com.catalogar.user.User;
 import org.springframework.stereotype.Component;
 
@@ -13,9 +15,11 @@ import java.util.Optional;
 @Component
 public class CatalogMapper {
     private final CompanyMapper companyMapper;
+    private final ThemeMapper themeMapper;
 
-    public CatalogMapper(CompanyMapper companyMapper) {
+    public CatalogMapper(CompanyMapper companyMapper, ThemeMapper themeMapper) {
         this.companyMapper = companyMapper;
+        this.themeMapper = themeMapper;
     }
 
     public Catalog toCatalog(User user, CreateCatalogRequest catalogRequestDto) {
@@ -42,6 +46,9 @@ public class CatalogMapper {
         Optional<CompanyDto> companyDto = Optional.ofNullable(catalog.getCompany())
                 .map(companyMapper::toDto);
 
+        Optional<ThemeDto> themeDto = Optional.ofNullable(catalog.getTheme())
+                .map(themeMapper::toDto);
+
         boolean isPublished = catalog.isPublished();
 
         return new CatalogDto(
@@ -51,7 +58,8 @@ public class CatalogMapper {
                 isPublished,
                 catalog.getCreatedAt(),
                 catalog.getUpdatedAt(),
-                companyDto
+                companyDto,
+                themeDto
         );
     }
 }

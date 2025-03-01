@@ -32,14 +32,14 @@ public class CompanyService {
             );
         }
 
-        return createCompany(request, currentCatalog);
+        return create(request, currentCatalog);
     }
 
     private Catalog getUserCurrentCatalog(User user) {
         return userService.getUserCurrentCatalog(user);
     }
 
-    private Company createCompany(CompanyRequest request, Catalog catalog) {
+    private Company create(CompanyRequest request, Catalog catalog) {
         Company company = companyMapper.toCompany(request);
         company.setCatalog(catalog);
 
@@ -56,11 +56,11 @@ public class CompanyService {
             );
         }
 
-        return updateCompany(request,
+        return update(request,
                 currentCatalog.getCompany());
     }
 
-    private Company updateCompany(CompanyRequest request, Company company) {
+    private Company update(CompanyRequest request, Company company) {
         company.setName(request.name());
         company.setMainSiteUrl(request.mainSiteUrl());
         company.setPhoneNumber(request.phoneNumber());
