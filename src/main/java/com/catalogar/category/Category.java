@@ -1,5 +1,6 @@
 package com.catalogar.category;
 
+import com.catalogar.catalog.Catalog;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -74,49 +75,26 @@ public class Category {
     )
     private LocalDateTime updatedAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "catalog_id",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(
+                    name = "category_catalog_id_fk"
+            ),
+            updatable = false,
+            nullable = false
+    )
+    private Catalog catalog;
+
     public Category() {
     }
 
-    public Category(String name,
-                    String slug,
-                    String textColor,
-                    String backgroundColor) {
+    public Category(String name, String slug, String textColor, String backgroundColor) {
         this.name = name;
         this.slug = slug;
         this.textColor = textColor;
         this.backgroundColor = backgroundColor;
-    }
-
-    public Category(UUID id,
-                    String name,
-                    String slug,
-                    String textColor,
-                    String backgroundColor,
-                    LocalDateTime disabledAt) {
-        this.id = id;
-        this.name = name;
-        this.slug = slug;
-        this.textColor = textColor;
-        this.backgroundColor = backgroundColor;
-        this.disabledAt = disabledAt;
-    }
-
-    public Category(UUID id,
-                    String name,
-                    String slug,
-                    String textColor,
-                    String backgroundColor,
-                    LocalDateTime disabledAt,
-                    LocalDateTime createdAt,
-                    LocalDateTime updatedAt) {
-        this.id = id;
-        this.name = name;
-        this.slug = slug;
-        this.textColor = textColor;
-        this.backgroundColor = backgroundColor;
-        this.disabledAt = disabledAt;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
     }
 
     public UUID getId() {
@@ -175,6 +153,14 @@ public class Category {
         return updatedAt;
     }
 
+    public Catalog getCatalog() {
+        return catalog;
+    }
+
+    public void setCatalog(Catalog catalog) {
+        this.catalog = catalog;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
@@ -185,5 +171,20 @@ public class Category {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, slug, textColor, backgroundColor, disabledAt);
+    }
+
+    @Override
+    public String toString() {
+        return "Category{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", slug='" + slug + '\'' +
+                ", textColor='" + textColor + '\'' +
+                ", backgroundColor='" + backgroundColor + '\'' +
+                ", disabledAt=" + disabledAt +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", catalog=" + catalog +
+                '}';
     }
 }

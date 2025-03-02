@@ -1,5 +1,6 @@
 package com.catalogar.catalog;
 
+import com.catalogar.category.Category;
 import com.catalogar.company.Company;
 import com.catalogar.product.Product;
 import com.catalogar.theme.Theme;
@@ -100,6 +101,12 @@ public class Catalog {
     )
     private List<Product> products = new ArrayList<>();
 
+    @OneToMany(
+            mappedBy = "catalog",
+            orphanRemoval = true
+    )
+    private List<Category> categories = new ArrayList<>();
+
     public UUID getId() {
         return id;
     }
@@ -180,6 +187,14 @@ public class Catalog {
         this.products = products;
     }
 
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
+    }
+
     public Catalog(User user, String slug, LocalDateTime publishedAt, Company company) {
         this.user = user;
         this.slug = slug;
@@ -206,12 +221,12 @@ public class Catalog {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Catalog catalog = (Catalog) o;
-        return Objects.equals(id, catalog.id) && Objects.equals(slug, catalog.slug) && Objects.equals(publishedAt, catalog.publishedAt) && Objects.equals(createdAt, catalog.createdAt) && Objects.equals(updatedAt, catalog.updatedAt) && Objects.equals(company, catalog.company) && Objects.equals(theme, catalog.theme) && Objects.equals(products, catalog.products);
+        return Objects.equals(id, catalog.id) && Objects.equals(slug, catalog.slug) && Objects.equals(publishedAt, catalog.publishedAt) && Objects.equals(createdAt, catalog.createdAt) && Objects.equals(updatedAt, catalog.updatedAt) && Objects.equals(company, catalog.company) && Objects.equals(theme, catalog.theme) && Objects.equals(user, catalog.user) && Objects.equals(products, catalog.products) && Objects.equals(categories, catalog.categories);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, slug, publishedAt, createdAt, updatedAt, company, theme, products);
+        return Objects.hash(id, slug, publishedAt, createdAt, updatedAt, company, theme, user, products, categories);
     }
 
     @Override
@@ -223,6 +238,10 @@ public class Catalog {
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 ", company=" + company +
+                ", theme=" + theme +
+                ", user=" + user +
+                ", products=" + products +
+                ", categories=" + categories +
                 '}';
     }
 }

@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 
-public record CategoryFilterDto (
+public record CategoryFilter(
         @Pattern(
                 regexp = "asc|desc",
                 message = "Ordenação inválida. Valores permitidos: crescente, decrescente"

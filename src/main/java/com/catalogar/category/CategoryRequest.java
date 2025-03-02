@@ -4,7 +4,7 @@ import com.catalogar.common.validation.Hexadecimal;
 import com.catalogar.common.validation.Slug;
 import jakarta.validation.constraints.NotEmpty;
 
-public record CategoryRequestDto(
+public record CategoryRequest(
         @NotEmpty(message = "Nome da categoria é obrigatório")
         String name,
         @NotEmpty(message = "Slug da categoria é obrigatório")
@@ -15,6 +15,8 @@ public record CategoryRequestDto(
         String textColor,
         @NotEmpty(message = "Cor de fundo é obrigatória")
         @Hexadecimal(message = "Cor de fundo deve ser hexadecimal. Exemplo: #FD0054")
-        String backgroundColor
+        String backgroundColor,
+
+        boolean isDisabled
 ) {
 }
