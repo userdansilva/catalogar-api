@@ -9,7 +9,7 @@ public record CategoryDto(
         String slug,
         String textColor,
         String backgroundColor,
-        boolean isActive,
+        boolean isDisabled,
         LocalDateTime disabledAt,
         LocalDateTime createdAt,
         LocalDateTime updatedAt

@@ -1,26 +1,36 @@
 package com.catalogar.category;
 
+import com.catalogar.catalog.Catalog;
 import com.catalogar.common.exception.ResourceNotFoundException;
 import com.catalogar.common.exception.UniqueFieldConflictException;
+import com.catalogar.common.message.MessageService;
+import com.catalogar.user.User;
+import com.catalogar.user.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
 public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
+    private final UserService userService;
+    private final MessageService messageService;
 
-    public CategoryService(CategoryRepository categoryRepository, CategoryMapper categoryMapper) {
+    public CategoryService(CategoryRepository categoryRepository, CategoryMapper categoryMapper, UserService userService, MessageService messageService) {
         this.categoryRepository = categoryRepository;
         this.categoryMapper = categoryMapper;
+        this.userService = userService;
+        this.messageService = messageService;
     }
 
-    public Page<Category> getAll(CategoryFilterDto filterDto) {
+    public Page<Category> getAll(CategoryFilter filterDto, User user) {
+        Catalog catalog = getUserCurrentCatalog(user);
         int pageNumber = Integer.parseInt(filterDto.page()) - 1;
         int pageSize = Integer.parseInt(filterDto.perPage());
 
@@ -28,53 +38,119 @@ public class CategoryService {
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
 
-        return categoryRepository.findAll(pageable);
+        return categoryRepository.findAllByCatalog(catalog, pageable);
     }
 
-    public Category getById(UUID id) {
-        return categoryRepository
-                .findById(id)
+    private Catalog getUserCurrentCatalog(User user) {
+        return userService.getUserCurrentCatalog(user);
+    }
+
+    public Category getById(UUID id, User user) {
+        Catalog catalog = getUserCurrentCatalog(user);
+
+        return categoryRepository.findByIdAndCatalog(id, catalog)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Categoria com id: " + id + " não encontrada"));
+                        messageService.getMessage("error.category.not_found")
+                ));
     }
 
-    public Category create(CategoryRequestDto categoryRequestDto) {
-        boolean existsByName = categoryRepository
-                .existsByName(categoryRequestDto.name());
+    public Category create(CategoryRequest request, User user) {
+        Catalog catalog = getUserCurrentCatalog(user);
+        boolean existsByName = existsByNameAndCatalog(request.name(), catalog);
 
         if (existsByName) {
             throw new UniqueFieldConflictException(
-                    "Categoria com o nome " + categoryRequestDto.name() + " já está cadastrada"
+                    messageService.getMessage("error.category.name_unavailable", request.name())
             );
         }
 
-        Category category = categoryMapper.toCategory(categoryRequestDto);
+        boolean existsBySlug = existsBySlugAndCatalog(request.slug(), catalog);
+
+        if (existsBySlug) {
+            throw new UniqueFieldConflictException(
+                    messageService.getMessage("error.category.slug_unavailable", request.slug())
+            );
+        }
+
+        Category category = categoryMapper.toCategory(request);
+        category.setDisabledAt(request.isDisabled()
+                ? LocalDateTime.now()
+                : null);
+
+        category.setCatalog(catalog);
 
         return categoryRepository.save(category);
     }
 
-    public Category update(UUID id, CategoryRequestDto categoryRequest) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Categoria com id: " + id + " não encontrada"
-                ));
+    private boolean existsByNameAndCatalog(String name, Catalog catalog) {
+        return categoryRepository.existsByNameAndCatalog(name, catalog);
+    }
 
-        category.setName(categoryRequest.name());
-        category.setTextColor(categoryRequest.textColor());
-        category.setBackgroundColor(categoryRequest.backgroundColor());
+    private boolean existsBySlugAndCatalog(String slug, Catalog catalog) {
+        return categoryRepository.existsBySlugAndCatalog(slug, catalog);
+    }
+
+    public Category update(UUID id, CategoryRequest request, User user) {
+        Category category = getById(id, user);
+        Catalog catalog = getUserCurrentCatalog(user);
+
+        boolean existsByNameAndIdNot = existsByNameAndIdNotAndCatalog(
+                request.name(), id, catalog
+        );
+
+        if (existsByNameAndIdNot) {
+            throw new UniqueFieldConflictException(
+                    messageService.getMessage("error.category.name_unavailable", request.name())
+            );
+        }
+
+        boolean existsBySlugAndIdNot = existsBySlugAndIdNotAndCatalog(
+                request.slug(), id, catalog
+        );
+
+        if (existsBySlugAndIdNot) {
+            throw new UniqueFieldConflictException(
+                    messageService.getMessage("error.category.slug_unavailable", request.slug())
+            );
+        }
+
+        category.setName(request.name());
+        category.setSlug(request.slug());
+        category.setTextColor(request.textColor());
+        category.setBackgroundColor(request.backgroundColor());
+        category.setDisabledAt(request.isDisabled()
+                ? LocalDateTime.now()
+                : null);
 
         return categoryRepository.save(category);
     }
 
-    public void delete(UUID id) {
-        boolean existsById = categoryRepository.existsById(id);
+    private boolean existsByNameAndIdNotAndCatalog(String name, UUID id, Catalog catalog) {
+        return categoryRepository.existsByNameAndIdNotAndCatalog(name, id, catalog);
+    }
+
+    private boolean existsBySlugAndIdNotAndCatalog(String slug, UUID id, Catalog catalog) {
+        return categoryRepository.existsBySlugAndIdNotAndCatalog(slug, id, catalog);
+    }
+
+    public void delete(UUID id, User user) {
+        Catalog catalog = getUserCurrentCatalog(user);
+        boolean existsById = existsByIdAndCatalog(id, catalog);
 
         if (!existsById) {
             throw new ResourceNotFoundException(
-                    "Categoria com id: " + id + " não encontrada"
+                    messageService.getMessage("error.category.not_found")
             );
         }
 
-        categoryRepository.deleteById(id);
+        deleteByIdAndCatalog(id, catalog);
+    }
+
+    private boolean existsByIdAndCatalog(UUID id, Catalog catalog) {
+        return categoryRepository.existsByIdAndCatalog(id, catalog);
+    }
+
+    private void deleteByIdAndCatalog(UUID id, Catalog catalog) {
+        categoryRepository.deleteByIdAndCatalog(id, catalog);
     }
 }

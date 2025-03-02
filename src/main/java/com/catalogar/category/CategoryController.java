@@ -1,17 +1,19 @@
 package com.catalogar.category;
 
 import com.catalogar.common.dto.ApiResponse;
-import jakarta.validation.ConstraintViolation;
+import com.catalogar.user.User;
+import com.catalogar.user.UserService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import jakarta.validation.Validator;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -20,15 +22,18 @@ public class CategoryController {
     private final CategoryService categoryService;
     private final Validator validator;
     private final CategoryMapper categoryMapper;
+    private final UserService userService;
 
-    public CategoryController(CategoryService categoryService, Validator validator, CategoryMapper categoryMapper) {
+    public CategoryController(CategoryService categoryService, Validator validator, CategoryMapper categoryMapper, UserService userService) {
         this.categoryService = categoryService;
         this.validator = validator;
         this.categoryMapper = categoryMapper;
+        this.userService = userService;
     }
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<CategoryDto>>> getAll(
+            @AuthenticationPrincipal Jwt jwt,
             @RequestParam(
                     name = "sort",
                     required = false,
@@ -57,16 +62,17 @@ public class CategoryController {
             )
             String perPage
     ) {
-        CategoryFilterDto filterDto = new CategoryFilterDto(sort, field, page, perPage);
+        User user = userService.getByJwtOrCreate(jwt);
 
-        Set<ConstraintViolation<CategoryFilterDto>> violations = validator.validate(filterDto);
+        CategoryFilter filter = new CategoryFilter(sort, field, page, perPage);
+
+        var violations = validator.validate(filter);
 
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
 
-        Page<Category> categories = categoryService
-                .getAll(filterDto);
+        Page<Category> categories = categoryService.getAll(filter, user);
 
         return ResponseEntity.ok()
                 .body(categoryMapper.toApiResponse(categories));
@@ -74,9 +80,12 @@ public class CategoryController {
 
     @GetMapping("{id}")
     public ResponseEntity<ApiResponse<CategoryDto>> getById(
+            @AuthenticationPrincipal Jwt jwt,
             @PathVariable("id") UUID id
     ) {
-        Category category = categoryService.getById(id);
+        User user = userService.getByJwtOrCreate(jwt);
+
+        Category category = categoryService.getById(id, user);
 
         return ResponseEntity.ok()
                 .body(categoryMapper.toApiResponse(category));
@@ -84,51 +93,41 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<CategoryDto>> create(
-            @Valid @RequestBody CategoryRequestDto categoryRequestDto
+            @AuthenticationPrincipal Jwt jwt,
+            @Valid @RequestBody CategoryRequest request
     ) {
-        Category category = categoryService.create(categoryRequestDto);
+        User user = userService.getByJwtOrCreate(jwt);
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(categoryMapper
-                        .toApiResponse(
-                                category,
-                                "Categoria "
-                                        + category.getName()
-                                        + " criada com sucesso!"
-                        ));
+        Category category = categoryService.create(request, user);
+        URI location = URI.create("/api/v1/categories/" + category.getId());
+
+        return ResponseEntity.created(location)
+                .body(categoryMapper.toApiResponse(category));
     }
 
     @PutMapping("{id}")
     public ResponseEntity<ApiResponse<CategoryDto>> update(
-            @PathVariable UUID id,
-            @Valid @RequestBody CategoryRequestDto categoryRequest
+            @AuthenticationPrincipal Jwt jwt,
+            @Valid @RequestBody CategoryRequest request,
+            @PathVariable UUID id
     ) {
-        Category category = categoryService.update(id, categoryRequest);
+        User user = userService.getByJwtOrCreate(jwt);
+        Category category = categoryService.update(id, request, user);
 
         return ResponseEntity.ok()
-                .body(categoryMapper
-                        .toApiResponse(
-                                category,
-                                "Categoria "
-                                + category.getName()
-                                + " atualizada com sucesso!"
-                        ));
+                .body(categoryMapper.toApiResponse(category));
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<ApiResponse<Void>> delete(
+    public ResponseEntity<Void> delete(
+            @AuthenticationPrincipal Jwt jwt,
             @PathVariable UUID id
     ) {
-        Category category = categoryService.getById(id);
+        User user = userService.getByJwtOrCreate(jwt);
 
-        ApiResponse<Void> apiResponse = new ApiResponse<Void>(
-                "Categoria "
-                + category.getName()
-                + " removida com sucesso!"
-        );
+        categoryService.delete(id, user);
 
-        categoryService.delete(id);
-
-        return ResponseEntity.ok().body(apiResponse);
+        return ResponseEntity.noContent()
+                .build();
     }
 }
