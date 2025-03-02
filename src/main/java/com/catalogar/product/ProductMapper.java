@@ -18,9 +18,10 @@ public class ProductMapper {
 
     public ProductDto toDto(Product product) {
         return new ProductDto(
+                product.getId(),
                 product.getName(),
                 product.getSlug(),
-                product.getDisabledAt() == null,
+                product.getDisabledAt() != null,
                 product.getDisabledAt(),
                 product.getCreatedAt(),
                 product.getUpdatedAt()

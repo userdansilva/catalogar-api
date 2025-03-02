@@ -61,10 +61,7 @@ public class Product {
     )
     private LocalDateTime updatedAt;
 
-    @ManyToOne(
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY
-    )
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "catalog_id",
             referencedColumnName = "id",

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/products")
@@ -77,6 +78,19 @@ public class ProductController {
                 .body(productMapper.toApiResponse(products));
     }
 
+    @GetMapping("{id}")
+    public ResponseEntity<ApiResponse<ProductDto>> getById(
+        @AuthenticationPrincipal Jwt jwt,
+        @PathVariable("id") UUID id
+    ) {
+        User user = userService.getByJwtOrCreate(jwt);
+
+        Product product = productService.getById(id, user);
+
+        return ResponseEntity.ok()
+                .body(productMapper.toApiResponse(product));
+    }
+
     @PostMapping
     public ResponseEntity<ApiResponse<ProductDto>> create(
             @AuthenticationPrincipal Jwt jwt,
@@ -90,4 +104,31 @@ public class ProductController {
        return ResponseEntity.created(location)
                .body(productMapper.toApiResponse(product));
     }
+
+    @PutMapping("{id}")
+    public ResponseEntity<ApiResponse<ProductDto>> update(
+            @AuthenticationPrincipal Jwt jwt,
+            @Valid @RequestBody ProductRequest request,
+            @PathVariable("id") UUID id
+    ) {
+        User user = userService.getByJwtOrCreate(jwt);
+        Product product = productService.update(id, request, user);
+
+        return ResponseEntity.ok()
+                .body(productMapper.toApiResponse(product));
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> delete(
+            @AuthenticationPrincipal Jwt jwt,
+            @PathVariable("id") UUID id
+    ) {
+        User user = userService.getByJwtOrCreate(jwt);
+
+        productService.delete(id, user);
+
+        return ResponseEntity.noContent()
+                .build();
+    }
+
 }
