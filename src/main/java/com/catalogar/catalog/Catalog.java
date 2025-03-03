@@ -1,5 +1,6 @@
 package com.catalogar.catalog;
 
+import com.catalogar.catalogItem.CatalogItem;
 import com.catalogar.category.Category;
 import com.catalogar.company.Company;
 import com.catalogar.product.Product;
@@ -107,6 +108,12 @@ public class Catalog {
     )
     private List<Category> categories = new ArrayList<>();
 
+    @OneToMany(
+            mappedBy = "catalog",
+            orphanRemoval = true
+    )
+    private List<CatalogItem> catalogItems = new ArrayList<>();
+
     public UUID getId() {
         return id;
     }
@@ -193,6 +200,14 @@ public class Catalog {
 
     public void setCategories(List<Category> categories) {
         this.categories = categories;
+    }
+
+    public List<CatalogItem> getCatalogItems() {
+        return catalogItems;
+    }
+
+    public void setCatalogItems(List<CatalogItem> catalogItems) {
+        this.catalogItems = catalogItems;
     }
 
     public Catalog(User user, String slug, LocalDateTime publishedAt, Company company) {

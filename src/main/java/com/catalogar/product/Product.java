@@ -1,12 +1,15 @@
 package com.catalogar.product;
 
 import com.catalogar.catalog.Catalog;
+import com.catalogar.catalogItem.CatalogItem;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -73,6 +76,12 @@ public class Product {
     )
     private Catalog catalog;
 
+    @OneToMany(
+            mappedBy = "product",
+            orphanRemoval = true
+    )
+    private List<CatalogItem> catalogItems = new ArrayList<>();
+
     public UUID getId() {
         return id;
     }
@@ -129,6 +138,14 @@ public class Product {
         this.catalog = catalog;
     }
 
+    public List<CatalogItem> getCatalogItems() {
+        return catalogItems;
+    }
+
+    public void setCatalogItems(List<CatalogItem> catalogItems) {
+        this.catalogItems = catalogItems;
+    }
+
     public Product() {
     }
 
@@ -137,15 +154,30 @@ public class Product {
         this.slug = slug;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return Objects.equals(id, product.id) && Objects.equals(name, product.name) && Objects.equals(slug, product.slug) && Objects.equals(disabledAt, product.disabledAt) && Objects.equals(createdAt, product.createdAt) && Objects.equals(updatedAt, product.updatedAt) && Objects.equals(catalog, product.catalog);
+        return Objects.equals(id, product.id) && Objects.equals(name, product.name) && Objects.equals(slug, product.slug) && Objects.equals(disabledAt, product.disabledAt) && Objects.equals(createdAt, product.createdAt) && Objects.equals(updatedAt, product.updatedAt) && Objects.equals(catalog, product.catalog) && Objects.equals(catalogItems, product.catalogItems);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, slug, disabledAt, createdAt, updatedAt, catalog);
+        return Objects.hash(id, name, slug, disabledAt, createdAt, updatedAt, catalog, catalogItems);
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", slug='" + slug + '\'' +
+                ", disabledAt=" + disabledAt +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", catalog=" + catalog +
+                ", catalogItems=" + catalogItems +
+                '}';
     }
 }

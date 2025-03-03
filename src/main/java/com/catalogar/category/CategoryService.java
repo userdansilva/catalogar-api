@@ -13,6 +13,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -48,10 +50,14 @@ public class CategoryService {
     public Category getById(UUID id, User user) {
         Catalog catalog = getUserCurrentCatalog(user);
 
-        return categoryRepository.findByIdAndCatalog(id, catalog)
+        return findByIdAndCatalog(id, catalog)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         messageService.getMessage("error.category.not_found")
                 ));
+    }
+
+    public Optional<Category> findByIdAndCatalog(UUID id, Catalog catalog) {
+        return categoryRepository.findByIdAndCatalog(id, catalog);
     }
 
     public Category create(CategoryRequest request, User user) {
@@ -152,5 +158,12 @@ public class CategoryService {
 
     private void deleteByIdAndCatalog(UUID id, Catalog catalog) {
         categoryRepository.deleteByIdAndCatalog(id, catalog);
+    }
+
+    public boolean existsByIdsAndCatalog(List<UUID> ids, Catalog catalog) {
+        if (ids.isEmpty()) return false;
+
+        return categoryRepository
+                .countByIdInAndCatalog(ids, catalog) == ids.size();
     }
 }
