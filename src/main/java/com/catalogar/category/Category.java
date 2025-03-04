@@ -1,12 +1,15 @@
 package com.catalogar.category;
 
 import com.catalogar.catalog.Catalog;
+import com.catalogar.catalogItem.CatalogItem;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -87,6 +90,11 @@ public class Category {
     )
     private Catalog catalog;
 
+    @ManyToMany(
+            mappedBy = "categories"
+    )
+    private List<CatalogItem> catalogItems = new ArrayList<>();
+
     public Category() {
     }
 
@@ -159,6 +167,14 @@ public class Category {
 
     public void setCatalog(Catalog catalog) {
         this.catalog = catalog;
+    }
+
+    public List<CatalogItem> getCatalogItems() {
+        return catalogItems;
+    }
+
+    public void setCatalogItems(List<CatalogItem> catalogItems) {
+        this.catalogItems = catalogItems;
     }
 
     @Override

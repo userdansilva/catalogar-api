@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -48,10 +49,14 @@ public class ProductService {
     public Product getById(UUID id, User user) {
         Catalog catalog = getUserCurrentCatalog(user);
 
-        return productRepository.findByIdAndCatalog(id, catalog)
+        return findByIdAndCatalog(id, catalog)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         messageService.getMessage("error.product.not_found")
                 ));
+    }
+
+    public Optional<Product> findByIdAndCatalog(UUID id, Catalog catalog) {
+        return productRepository.findByIdAndCatalog(id, catalog);
     }
 
     public Product create(ProductRequest request, User user) {
@@ -144,7 +149,7 @@ public class ProductService {
         deleteByIdAndCatalog(id, catalog);
     }
 
-    private boolean existsByIdAndCatalog(UUID id, Catalog catalog) {
+    public boolean existsByIdAndCatalog(UUID id, Catalog catalog) {
         return productRepository.existsByIdAndCatalog(id, catalog);
     }
 

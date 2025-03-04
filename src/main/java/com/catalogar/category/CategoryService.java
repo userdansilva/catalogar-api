@@ -13,6 +13,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -29,12 +31,12 @@ public class CategoryService {
         this.messageService = messageService;
     }
 
-    public Page<Category> getAll(CategoryFilter filterDto, User user) {
+    public Page<Category> getAll(CategoryFilter filter, User user) {
         Catalog catalog = getUserCurrentCatalog(user);
-        int pageNumber = Integer.parseInt(filterDto.page()) - 1;
-        int pageSize = Integer.parseInt(filterDto.perPage());
+        int pageNumber = Integer.parseInt(filter.page()) - 1;
+        int pageSize = Integer.parseInt(filter.perPage());
 
-        Sort sort = categoryMapper.toSort(filterDto);
+        Sort sort = categoryMapper.toSort(filter);
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
 
@@ -48,10 +50,14 @@ public class CategoryService {
     public Category getById(UUID id, User user) {
         Catalog catalog = getUserCurrentCatalog(user);
 
-        return categoryRepository.findByIdAndCatalog(id, catalog)
+        return findByIdAndCatalog(id, catalog)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         messageService.getMessage("error.category.not_found")
                 ));
+    }
+
+    public Optional<Category> findByIdAndCatalog(UUID id, Catalog catalog) {
+        return categoryRepository.findByIdAndCatalog(id, catalog);
     }
 
     public Category create(CategoryRequest request, User user) {
@@ -152,5 +158,12 @@ public class CategoryService {
 
     private void deleteByIdAndCatalog(UUID id, Catalog catalog) {
         categoryRepository.deleteByIdAndCatalog(id, catalog);
+    }
+
+    public boolean existsByIdsAndCatalog(List<UUID> ids, Catalog catalog) {
+        if (ids.isEmpty()) return false;
+
+        return categoryRepository
+                .countByIdInAndCatalog(ids, catalog) == ids.size();
     }
 }
