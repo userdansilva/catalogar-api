@@ -4,18 +4,23 @@ import com.catalogar.catalog.Catalog;
 import com.catalogar.category.Category;
 import com.catalogar.category.CategoryService;
 import com.catalogar.common.exception.BadRequestException;
+import com.catalogar.common.exception.ResourceNotFoundException;
 import com.catalogar.common.message.MessageService;
 import com.catalogar.product.Product;
 import com.catalogar.product.ProductService;
 import com.catalogar.user.User;
 import com.catalogar.user.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.Random;
+import java.util.UUID;
 
 @Service
 public class CatalogItemService {
@@ -35,6 +40,31 @@ public class CatalogItemService {
         this.catalogItemRepository = catalogItemRepository;
     }
 
+    public Page<CatalogItem> getAll(CatalogItemFilter filter, User user) {
+        Catalog catalog = getUserCurrentCatalog(user);
+        int pageNumber = Integer.parseInt(filter.page()) - 1;
+        int pageSize = Integer.parseInt(filter.perPage());
+
+        Sort sort = catalogItemMapper.toSort(filter);
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+
+        return catalogItemRepository.findAllByCatalog(catalog, pageable);
+    }
+
+    private Catalog getUserCurrentCatalog(User user) {
+        return userService.getUserCurrentCatalog(user);
+    }
+
+    public CatalogItem getById(UUID id, User user) {
+        Catalog catalog = getUserCurrentCatalog(user);
+
+        return catalogItemRepository.findByIdAndCatalog(id, catalog)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        messageService.getMessage("error.catalog_item.not_found")
+                ));
+    }
+
     public CatalogItem create(
         CatalogItemRequest request,
         User user
@@ -42,51 +72,38 @@ public class CatalogItemService {
         Catalog catalog = getUserCurrentCatalog(user);
         UUID productId = UUID.fromString(request.productId());
         List<UUID> categoryIds = request.categoryIds() != null
-                ? request.categoryIds()
-                    .stream()
-                    .map(UUID::fromString)
-                    .toList()
+                ? toUUIDList(request.categoryIds())
                 : new ArrayList<>();
 
-        boolean productExistsById = productExistsById(productId, catalog);
-
-        if (!productExistsById) {
-            throw new BadRequestException(
-                    messageService.getMessage("error.catalog_item.product_not_found")
-            );
-        }
-
-        if (!categoryIds.isEmpty()) {
-            boolean categoryExistsByIds = categoryExistsByIds(categoryIds, catalog);
-
-            if (!categoryExistsByIds) {
-                throw new BadRequestException(
-                        messageService.getMessage("error.catalog_item.categories_not_found")
-                );
-            }
-        }
-
         CatalogItem catalogItem = catalogItemMapper.toCatalogItem(request);
-        catalogItem.setDisabledAt(request.isDisabled()
-                ? LocalDateTime.now()
-                : null);
 
         Product product = getProductById(productId, catalog);
+        List<Category> categories = getCategoriesByIds(categoryIds, catalog);
+        Long reference = generateUniqueReference(catalog);
+        LocalDateTime disabledAt = request.isDisabled() ? LocalDateTime.now() : null;
+
         catalogItem.setProduct(product);
+        catalogItem.setCategories(categories);
+        catalogItem.setReference(reference);
+        catalogItem.setDisabledAt(disabledAt);
         catalogItem.setCatalog(catalog);
-
-        categoryIds.forEach((categoryId) -> {
-            Category category = getCategoryById(categoryId, catalog);
-            catalogItem.getCategories().add(category);
-        });
-
-        catalogItem.setReference(generateUniqueReference(catalog));
 
         return catalogItemRepository.save(catalogItem);
     }
 
-    private Catalog getUserCurrentCatalog(User user) {
-        return userService.getUserCurrentCatalog(user);
+    private List<UUID> toUUIDList(List<String> values) {
+        return values.stream().map(UUID::fromString).toList();
+    }
+
+    private List<Category> getCategoriesByIds(List<UUID> categoriesIds, Catalog catalog) {
+        List<Category> categories = new ArrayList<>();
+
+        categoriesIds.forEach((categoryId) -> {
+            Category category = getCategoryById(categoryId, catalog);
+            categories.add(category);
+        });
+
+        return categories;
     }
 
     private boolean productExistsById(UUID id, Catalog catalog) {
@@ -127,5 +144,48 @@ public class CatalogItemService {
         int max = 999_999;
 
         return (long) (random.nextInt((max - min) + 1) + min);
+    }
+
+    public CatalogItem update(UUID id, CatalogItemRequest request, User user) {
+        Catalog catalog = getUserCurrentCatalog(user);
+        UUID productId = UUID.fromString(request.productId());
+        List<UUID> categoryIds = request.categoryIds() != null
+                ? toUUIDList(request.categoryIds())
+                : new ArrayList<>();
+
+        CatalogItem catalogItem = getById(id, user);
+
+        Product product = getProductById(productId, catalog);
+        List<Category> categories = getCategoriesByIds(categoryIds, catalog);
+        LocalDateTime disabledAt = request.isDisabled() ? LocalDateTime.now() : null;
+
+        catalogItem.setTitle(request.title());
+        catalogItem.setPrice(request.price());
+        catalogItem.setProduct(product);
+        catalogItem.setCategories(categories);
+        catalogItem.setDisabledAt(disabledAt);
+
+        return catalogItemRepository.save(catalogItem);
+    }
+
+    public void delete(UUID id, User user) {
+        Catalog catalog = getUserCurrentCatalog(user);
+        boolean existsById = existsByIdAndCatalog(id, catalog);
+
+        if (!existsById) {
+            throw new ResourceNotFoundException(
+                    messageService.getMessage("error.catalog_item.not_found")
+            );
+        }
+
+        deleteByIdAndCatalog(id, catalog);
+    }
+
+    private boolean existsByIdAndCatalog(UUID id, Catalog catalog) {
+        return catalogItemRepository.existsByIdAndCatalog(id, catalog);
+    }
+
+    private void deleteByIdAndCatalog(UUID id, Catalog catalog) {
+        catalogItemRepository.deleteByIdAndCatalog(id, catalog);
     }
 }

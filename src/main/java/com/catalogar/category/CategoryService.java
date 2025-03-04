@@ -31,12 +31,12 @@ public class CategoryService {
         this.messageService = messageService;
     }
 
-    public Page<Category> getAll(CategoryFilter filterDto, User user) {
+    public Page<Category> getAll(CategoryFilter filter, User user) {
         Catalog catalog = getUserCurrentCatalog(user);
-        int pageNumber = Integer.parseInt(filterDto.page()) - 1;
-        int pageSize = Integer.parseInt(filterDto.perPage());
+        int pageNumber = Integer.parseInt(filter.page()) - 1;
+        int pageSize = Integer.parseInt(filter.perPage());
 
-        Sort sort = categoryMapper.toSort(filterDto);
+        Sort sort = categoryMapper.toSort(filter);
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
 

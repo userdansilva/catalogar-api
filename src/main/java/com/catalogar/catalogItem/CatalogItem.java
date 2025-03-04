@@ -205,6 +205,9 @@ public class CatalogItem {
         this.price = price;
     }
 
+    public CatalogItem() {
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
