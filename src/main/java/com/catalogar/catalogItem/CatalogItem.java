@@ -37,6 +37,12 @@ public class CatalogItem {
     private String title;
 
     @Column(
+            name = "caption",
+            columnDefinition = "TEXT"
+    )
+    private String caption;
+
+    @Column(
             name = "price",
             precision = 10,
             scale = 2,
@@ -124,6 +130,7 @@ public class CatalogItem {
 
     @OneToMany(
             mappedBy = "catalogItem",
+            cascade = CascadeType.ALL,
             orphanRemoval = true
     )
     private List<Image> images = new ArrayList<>();
@@ -142,6 +149,14 @@ public class CatalogItem {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getCaption() {
+        return caption;
+    }
+
+    public void setCaption(String caption) {
+        this.caption = caption;
     }
 
     public BigDecimal getPrice() {
@@ -216,8 +231,9 @@ public class CatalogItem {
         this.images = images;
     }
 
-    public CatalogItem(String title, BigDecimal price) {
+    public CatalogItem(String title, String caption, BigDecimal price) {
         this.title = title;
+        this.caption = caption;
         this.price = price;
     }
 
@@ -228,12 +244,12 @@ public class CatalogItem {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         CatalogItem that = (CatalogItem) o;
-        return Objects.equals(id, that.id) && Objects.equals(title, that.title) && Objects.equals(price, that.price) && Objects.equals(reference, that.reference) && Objects.equals(disabledAt, that.disabledAt) && Objects.equals(createdAt, that.createdAt) && Objects.equals(updatedAt, that.updatedAt) && Objects.equals(product, that.product) && Objects.equals(categories, that.categories);
+        return Objects.equals(id, that.id) && Objects.equals(title, that.title) && Objects.equals(caption, that.caption) && Objects.equals(price, that.price) && Objects.equals(reference, that.reference) && Objects.equals(disabledAt, that.disabledAt) && Objects.equals(createdAt, that.createdAt) && Objects.equals(updatedAt, that.updatedAt) && Objects.equals(catalog, that.catalog) && Objects.equals(product, that.product) && Objects.equals(categories, that.categories) && Objects.equals(images, that.images);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, price, reference, disabledAt, createdAt, updatedAt, product, categories);
+        return Objects.hash(id, title, caption, price, reference, disabledAt, createdAt, updatedAt, catalog, product, categories, images);
     }
 
     @Override
@@ -241,13 +257,16 @@ public class CatalogItem {
         return "CatalogItem{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
+                ", caption='" + caption + '\'' +
                 ", price=" + price +
                 ", reference=" + reference +
                 ", disabledAt=" + disabledAt +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
+                ", catalog=" + catalog +
                 ", product=" + product +
                 ", categories=" + categories +
+                ", images=" + images +
                 '}';
     }
 }

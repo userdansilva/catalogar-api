@@ -5,6 +5,8 @@ import com.catalogar.category.CategoryMapper;
 import com.catalogar.common.dto.ApiResponse;
 import com.catalogar.common.dto.Metadata;
 import com.catalogar.common.dto.Pagination;
+import com.catalogar.image.ImageDto;
+import com.catalogar.image.ImageMapper;
 import com.catalogar.product.ProductDto;
 import com.catalogar.product.ProductMapper;
 import org.springframework.data.domain.Page;
@@ -17,15 +19,18 @@ import java.util.List;
 public class CatalogItemMapper {
     private final ProductMapper productMapper;
     private final CategoryMapper categoryMapper;
+    private final ImageMapper imageMapper;
 
-    public CatalogItemMapper(ProductMapper productMapper, CategoryMapper categoryMapper) {
+    public CatalogItemMapper(ProductMapper productMapper, CategoryMapper categoryMapper, ImageMapper imageMapper) {
         this.productMapper = productMapper;
         this.categoryMapper = categoryMapper;
+        this.imageMapper = imageMapper;
     }
 
     public CatalogItem toCatalogItem(CatalogItemRequest request) {
         return new CatalogItem(
                 request.title(),
+                request.caption(),
                 request.price()
         );
     }
@@ -72,13 +77,21 @@ public class CatalogItemMapper {
                 .map(categoryMapper::toDto)
                 .toList();
 
+        List<ImageDto> imageDtoList = catalogItem.getImages()
+                .stream()
+                .map(imageMapper::toDto)
+                .toList();
+
+
         return new CatalogItemDto(
                 catalogItem.getId(),
                 catalogItem.getTitle(),
+                catalogItem.getCaption(),
                 catalogItem.getPrice(),
                 catalogItem.getReference(),
                 productDto,
                 categoryDtoList,
+                imageDtoList,
                 catalogItem.getDisabledAt() != null,
                 catalogItem.getDisabledAt(),
                 catalogItem.getCreatedAt(),

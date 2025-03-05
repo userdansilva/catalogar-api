@@ -11,7 +11,15 @@ import java.util.UUID;
 
 @Entity(name = "Image")
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "image")
+@Table(
+        name = "image",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "image_url_unique",
+                        columnNames = "url"
+                )
+        }
+)
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -59,6 +67,12 @@ public class Image {
             columnDefinition = "TIMESTAMP WITH TIME ZONE"
     )
     private LocalDateTime createdAt;
+
+    public Image(String url, Short position, CatalogItem catalogItem) {
+        this.url = url;
+        this.position = position;
+        this.catalogItem = catalogItem;
+    }
 
     public Image() {
     }

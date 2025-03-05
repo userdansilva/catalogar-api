@@ -19,29 +19,29 @@ import java.util.UUID;
 public class ImageService {
     private final BlobServiceClient blobServiceClient;
     private final String containerName;
-    private final ImageRepository imageRepository;
     private final MessageService messageService;
+    private final ImageRepository imageRepository;
 
     public ImageService(
             @Value("${azure.storage.connection-string}") String connectionString,
-            @Value("${azure.storage.container-name}") String containerName, ImageRepository imageRepository, MessageService messageService
+            @Value("${azure.storage.container-name}") String containerName, MessageService messageService, ImageRepository imageRepository
     ) {
         this.blobServiceClient = new BlobServiceClientBuilder()
                 .connectionString(connectionString)
                 .buildClient();
         this.containerName = containerName;
-        this.imageRepository = imageRepository;
         this.messageService = messageService;
+        this.imageRepository = imageRepository;
     }
 
     public String generateSasToken(String fileName) {
         validateFileName(fileName);
 
         String fileExtension = fileName.substring(fileName.lastIndexOf("."));
-        String uniqueFileName = generateUniqueImageName(fileExtension);
+        String newFileName = UUID.randomUUID() + fileExtension;
 
         BlobClient blobClient = blobServiceClient.getBlobContainerClient(containerName)
-                .getBlobClient(uniqueFileName);
+                .getBlobClient(newFileName);
         BlockBlobClient blockBlobClient = blobClient.getBlockBlobClient();
 
         BlobSasPermission sasPermission = new BlobSasPermission()
@@ -66,17 +66,7 @@ public class ImageService {
         }
     }
 
-    private String generateUniqueImageName(String fileExtension) {
-        UUID id;
-
-        do {
-            id  = UUID.randomUUID();
-        } while (existsById(id));
-
-        return id.toString() + fileExtension;
-    }
-
-    private boolean existsById(UUID id) {
-        return imageRepository.existsById(id);
+    public String getBlobUrl() {
+        return blobServiceClient.getAccountUrl() + "/" + containerName + "/";
     }
 }
