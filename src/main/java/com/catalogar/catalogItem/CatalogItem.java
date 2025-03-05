@@ -2,6 +2,7 @@ package com.catalogar.catalogItem;
 
 import com.catalogar.catalog.Catalog;
 import com.catalogar.category.Category;
+import com.catalogar.image.Image;
 import com.catalogar.product.Product;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -17,6 +18,7 @@ import java.util.UUID;
 
 @Entity(name = "CatalogItem")
 @EntityListeners(AuditingEntityListener.class)
+@Table(name = "catalog_item")
 public class CatalogItem {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -120,6 +122,12 @@ public class CatalogItem {
     )
     private List<Category> categories = new ArrayList<>();
 
+    @OneToMany(
+            mappedBy = "catalogItem",
+            orphanRemoval = true
+    )
+    private List<Image> images = new ArrayList<>();
+
     public UUID getId() {
         return id;
     }
@@ -198,6 +206,14 @@ public class CatalogItem {
 
     public void setCatalog(Catalog catalog) {
         this.catalog = catalog;
+    }
+
+    public List<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(List<Image> images) {
+        this.images = images;
     }
 
     public CatalogItem(String title, BigDecimal price) {

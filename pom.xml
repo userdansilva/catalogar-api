@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.1</version>
+		<version>3.4.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.catalogar</groupId>
@@ -28,14 +28,19 @@
 	</scm>
 	<properties>
 		<java.version>17</java.version>
-		<azure.version>4.0.0</azure.version>
+		<spring-cloud-azure.version>5.20.1</spring-cloud-azure.version>
 	</properties>
 	<dependencies>
 		<!-- Azure Active Directory Spring Boot Starter  -->
 		<dependency>
 			<groupId>com.azure.spring</groupId>
-			<artifactId>azure-spring-boot-starter-active-directory-b2c</artifactId>
-			<version>${azure.version}</version>
+			<artifactId>spring-cloud-azure-starter-active-directory-b2c</artifactId>
+		</dependency>
+
+		<!-- Azure Blob Spring Boot Starter  -->
+		<dependency>
+			<groupId>com.azure.spring</groupId>
+			<artifactId>spring-cloud-azure-starter-storage</artifactId>
 		</dependency>
 
 		<!-- Spring OAuth2 Resource Server -->
@@ -113,6 +118,18 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.azure.spring</groupId>
+				<artifactId>spring-cloud-azure-dependencies</artifactId>
+				<version>${spring-cloud-azure.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<build>
 		<plugins>
