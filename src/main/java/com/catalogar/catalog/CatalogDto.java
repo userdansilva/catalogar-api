@@ -9,6 +9,7 @@ import java.util.UUID;
 
 public record CatalogDto(
         UUID id,
+        String name,
         String slug,
         LocalDateTime publishedAt,
         boolean isPublished,

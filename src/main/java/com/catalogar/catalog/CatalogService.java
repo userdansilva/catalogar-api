@@ -27,7 +27,7 @@ public class CatalogService {
         this.messageService = messageService;
     }
 
-    public Catalog create(CreateCatalogRequest request, User user) {
+    public Catalog create(CatalogRequest request, User user) {
         boolean existsBySlug = existsBySlug(request.slug());
 
         if (existsBySlug) {
@@ -43,14 +43,14 @@ public class CatalogService {
         return catalogRepository.existsBySlug(slug);
     }
 
-    private Catalog createAndUpdateUserCurrentCatalog(CreateCatalogRequest request, User user) {
+    private Catalog createAndUpdateUserCurrentCatalog(CatalogRequest request, User user) {
         Catalog catalog = createCatalog(request, user);
         updateUserCurrentCatalog(catalog, user);
 
         return catalog;
     }
 
-    private Catalog createCatalog(CreateCatalogRequest request, User user) {
+    private Catalog createCatalog(CatalogRequest request, User user) {
         return catalogRepository.save(catalogMapper
                 .toCatalog(user, request));
     }
@@ -59,7 +59,7 @@ public class CatalogService {
         userService.updateCurrentCatalog(user, catalog);
     }
 
-    public Catalog update(UpdateCatalogRequest request, User user) {
+    public Catalog update(CatalogRequest request, User user) {
         Catalog currentCatalog = getUserCurrentCatalog(user);
 
         boolean existsBySlugAndIdNot = existsBySlug(request.slug(),
@@ -83,7 +83,8 @@ public class CatalogService {
                 .existsBySlugAndIdNot(slug, id);
     }
 
-    private Catalog updateCatalog(Catalog catalog, UpdateCatalogRequest request) {
+    private Catalog updateCatalog(Catalog catalog, CatalogRequest request) {
+        catalog.setName(request.name());
         catalog.setSlug(request.slug());
 
         boolean isPublishing = !catalog.isPublished() && request.isPublished();

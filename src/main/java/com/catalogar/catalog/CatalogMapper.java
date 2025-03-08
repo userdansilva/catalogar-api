@@ -22,20 +22,17 @@ public class CatalogMapper {
         this.themeMapper = themeMapper;
     }
 
-    public Catalog toCatalog(User user, CreateCatalogRequest catalogRequestDto) {
-        LocalDateTime publishedAt = catalogRequestDto.isPublished()
+    public Catalog toCatalog(User user, CatalogRequest request) {
+        LocalDateTime publishedAt = request.isPublished()
                 ? ZonedDateTime.now().toLocalDateTime()
                 : null;
 
         return new Catalog(
                 user,
-                catalogRequestDto.slug(),
+                request.name(),
+                request.slug(),
                 publishedAt
         );
-    }
-
-    public Catalog toCatalog(CreateCatalogRequest requestDto) {
-        return this.toCatalog(null, requestDto);
     }
 
     public ApiResponse<CatalogDto> toApiResponse(Catalog catalog) {
@@ -53,6 +50,7 @@ public class CatalogMapper {
 
         return new CatalogDto(
                 catalog.getId(),
+                catalog.getName(),
                 catalog.getSlug(),
                 catalog.getPublishedAt(),
                 isPublished,

@@ -40,6 +40,13 @@ public class Catalog {
     private UUID id;
 
     @Column(
+            name = "name",
+            nullable = false,
+            columnDefinition = "TEXT"
+    )
+    private String name;
+
+    @Column(
             name = "slug",
             nullable = false,
             columnDefinition = "TEXT"
@@ -120,6 +127,14 @@ public class Catalog {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getSlug() {
@@ -210,23 +225,24 @@ public class Catalog {
         this.catalogItems = catalogItems;
     }
 
-    public Catalog(User user, String slug, LocalDateTime publishedAt, Company company) {
+    public Catalog(User user, String name, String slug, LocalDateTime publishedAt, Company company) {
         this.user = user;
+        this.name = name;
         this.slug = slug;
         this.publishedAt = publishedAt;
         this.company = company;
     }
 
-    public Catalog(User user, String slug, LocalDateTime publishedAt) {
-        this(user, slug, publishedAt, null);
+    public Catalog(User user, String name, String slug, LocalDateTime publishedAt) {
+        this(user, name, slug, publishedAt, null);
     }
 
-    public Catalog(String slug, LocalDateTime publishedAt) {
-        this(null, slug, publishedAt);
+    public Catalog(String name, String slug, LocalDateTime publishedAt) {
+        this(null, name, slug, publishedAt);
     }
 
-    public Catalog(String slug) {
-        this(slug, null);
+    public Catalog(String name, String slug) {
+        this(name, slug, null);
     }
 
     public Catalog() {
@@ -236,27 +252,28 @@ public class Catalog {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Catalog catalog = (Catalog) o;
-        return Objects.equals(id, catalog.id) && Objects.equals(slug, catalog.slug) && Objects.equals(publishedAt, catalog.publishedAt) && Objects.equals(createdAt, catalog.createdAt) && Objects.equals(updatedAt, catalog.updatedAt) && Objects.equals(company, catalog.company) && Objects.equals(theme, catalog.theme) && Objects.equals(user, catalog.user) && Objects.equals(products, catalog.products) && Objects.equals(categories, catalog.categories);
+        return Objects.equals(id, catalog.id) && Objects.equals(name, catalog.name) && Objects.equals(slug, catalog.slug) && Objects.equals(publishedAt, catalog.publishedAt) && Objects.equals(createdAt, catalog.createdAt) && Objects.equals(updatedAt, catalog.updatedAt) && Objects.equals(company, catalog.company) && Objects.equals(theme, catalog.theme) && Objects.equals(products, catalog.products) && Objects.equals(categories, catalog.categories) && Objects.equals(catalogItems, catalog.catalogItems);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, slug, publishedAt, createdAt, updatedAt, company, theme, user, products, categories);
+        return Objects.hash(id, name, slug, publishedAt, createdAt, updatedAt, company, theme, products, categories, catalogItems);
     }
 
     @Override
     public String toString() {
         return "Catalog{" +
                 "id=" + id +
+                ", name='" + name + '\'' +
                 ", slug='" + slug + '\'' +
                 ", publishedAt=" + publishedAt +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 ", company=" + company +
                 ", theme=" + theme +
-                ", user=" + user +
                 ", products=" + products +
                 ", categories=" + categories +
+                ", catalogItems=" + catalogItems +
                 '}';
     }
 }
