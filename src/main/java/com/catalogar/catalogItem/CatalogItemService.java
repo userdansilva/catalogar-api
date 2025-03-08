@@ -6,6 +6,9 @@ import com.catalogar.category.CategoryService;
 import com.catalogar.common.exception.BadRequestException;
 import com.catalogar.common.exception.ResourceNotFoundException;
 import com.catalogar.common.message.MessageService;
+import com.catalogar.image.Image;
+import com.catalogar.image.ImageRequest;
+import com.catalogar.image.ImageService;
 import com.catalogar.product.Product;
 import com.catalogar.product.ProductService;
 import com.catalogar.user.User;
@@ -17,10 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class CatalogItemService {
@@ -30,14 +30,16 @@ public class CatalogItemService {
     private final CategoryService categoryService;
     private final CatalogItemMapper catalogItemMapper;
     private final CatalogItemRepository catalogItemRepository;
+    private final ImageService imageService;
 
-    public CatalogItemService(UserService userService, ProductService productService, MessageService messageService, CategoryService categoryService, CatalogItemMapper catalogItemMapper, CatalogItemRepository catalogItemRepository) {
+    public CatalogItemService(UserService userService, ProductService productService, MessageService messageService, CategoryService categoryService, CatalogItemMapper catalogItemMapper, CatalogItemRepository catalogItemRepository, ImageService imageService) {
         this.userService = userService;
         this.productService = productService;
         this.messageService = messageService;
         this.categoryService = categoryService;
         this.catalogItemMapper = catalogItemMapper;
         this.catalogItemRepository = catalogItemRepository;
+        this.imageService = imageService;
     }
 
     public Page<CatalogItem> getAll(CatalogItemFilter filter, User user) {
@@ -69,6 +71,8 @@ public class CatalogItemService {
         CatalogItemRequest request,
         User user
     ) {
+        validateImages(request.images());
+
         Catalog catalog = getUserCurrentCatalog(user);
         UUID productId = UUID.fromString(request.productId());
         List<UUID> categoryIds = request.categoryIds() != null
@@ -88,7 +92,60 @@ public class CatalogItemService {
         catalogItem.setDisabledAt(disabledAt);
         catalogItem.setCatalog(catalog);
 
+        List<Image> images = toImages(request.images(), catalogItem);
+        catalogItem.setImages(images);
+
         return catalogItemRepository.save(catalogItem);
+    }
+
+    private void validateImages(List<ImageRequest> images) {
+        List<String> imageNames = images.stream()
+                .map(ImageRequest::name)
+                .toList();
+
+        validateUnique(imageNames);
+
+        List<Integer> imagePositions = images.stream()
+                .map(ImageRequest::position)
+                .toList();
+
+        validateImagePositionSequenceAndOrder(imagePositions);
+    }
+
+    private void validateUnique(List<String> imageNames) {
+        Set<String> names = new HashSet<>();
+
+        for (String imageName : imageNames) {
+            if (!names.add(imageName)) {
+                throw new BadRequestException(
+                        messageService.getMessage("error.image.duplicated")
+                );
+            }
+        }
+    }
+
+    private void validateImagePositionSequenceAndOrder(List<Integer> imagePositions) {
+        List<Integer> sortedPositions = imagePositions.stream()
+                .sorted()
+                .toList();
+
+        Set<Integer> positions = new HashSet<>();
+
+        for (int i = 0; i < sortedPositions.size(); i++) {
+            int position = sortedPositions.get(i);
+
+            if (!positions.add(position)) {
+                throw new BadRequestException(
+                        messageService.getMessage("error.image.duplicated_position")
+                );
+            }
+
+            if (position != i + 1) {
+                throw new BadRequestException(
+                        messageService.getMessage("error.image.invalid_position")
+                );
+            }
+        }
     }
 
     private List<UUID> toUUIDList(List<String> values) {
@@ -106,14 +163,6 @@ public class CatalogItemService {
         return categories;
     }
 
-    private boolean productExistsById(UUID id, Catalog catalog) {
-        return productService.existsByIdAndCatalog(id, catalog);
-    }
-
-    private boolean categoryExistsByIds(List<UUID> ids, Catalog catalog) {
-        return categoryService.existsByIdsAndCatalog(ids, catalog);
-    }
-
     private Product getProductById(UUID id, Catalog catalog) {
         return productService.findByIdAndCatalog(id, catalog)
                 .orElseThrow(() -> new BadRequestException(
@@ -126,6 +175,19 @@ public class CatalogItemService {
                 .orElseThrow(() -> new BadRequestException(
                         messageService.getMessage("error.catalog_item.category_not_found")
                 ));
+    }
+
+    private List<Image> toImages(List<ImageRequest> imageRequests, CatalogItem catalogItem) {
+        String blobUrl = imageService.getBlobUrl();
+
+        return imageRequests.stream()
+                .map((imageRequest -> {
+                    String url = blobUrl + imageRequest.name();
+                    Short position = (short) imageRequest.position();
+
+                    return new Image(url, position, catalogItem);
+                }))
+                .toList();
     }
 
     private Long generateUniqueReference(Catalog catalog) {
