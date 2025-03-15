@@ -36,7 +36,11 @@ public class CatalogMapper {
     }
 
     public ApiResponse<CatalogDto> toApiResponse(Catalog catalog) {
-        return new ApiResponse<CatalogDto>(this.toDto(catalog));
+        return this.toApiResponse(catalog, null);
+    }
+
+    public ApiResponse<CatalogDto> toApiResponse(Catalog catalog, String message) {
+        return new ApiResponse<>(this.toDto(catalog), message);
     }
 
     public CatalogDto toDto(Catalog catalog) {
