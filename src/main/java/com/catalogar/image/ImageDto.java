@@ -6,7 +6,7 @@ import java.util.UUID;
 public record ImageDto(
         UUID id,
         String url,
-        Short order,
+        Short position,
         LocalDateTime createdAt
 ) {
 }

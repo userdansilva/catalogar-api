@@ -29,8 +29,8 @@ public class ImageController {
             @RequestParam String fileName
     ) {
         userService.getByJwtOrCreate(jwt);
-        String sasToken = imageService.generateSasToken(fileName);
+        ImageSasToken imageSasToken = imageService.generateSasToken(fileName);
 
-        return ResponseEntity.ok().body(imageMapper.toApiResponse(sasToken));
+        return ResponseEntity.ok().body(imageMapper.toApiResponse(imageSasToken));
     }
 }

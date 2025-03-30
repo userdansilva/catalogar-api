@@ -24,7 +24,9 @@ public class ImageService {
 
     public ImageService(
             @Value("${azure.storage.connection-string}") String connectionString,
-            @Value("${azure.storage.container-name}") String containerName, MessageService messageService, ImageRepository imageRepository
+            @Value("${azure.storage.container-name}") String containerName,
+            MessageService messageService,
+            ImageRepository imageRepository
     ) {
         this.blobServiceClient = new BlobServiceClientBuilder()
                 .connectionString(connectionString)
@@ -34,7 +36,7 @@ public class ImageService {
         this.imageRepository = imageRepository;
     }
 
-    public String generateSasToken(String fileName) {
+    public ImageSasToken generateSasToken(String fileName) {
         validateFileName(fileName);
 
         String fileExtension = fileName.substring(fileName.lastIndexOf("."));
@@ -53,9 +55,13 @@ public class ImageService {
         var sasSignatureValues = new BlobServiceSasSignatureValues(expiryTime, sasPermission)
                 .setProtocol(SasProtocol.HTTPS_ONLY);
 
-        String sasToken = blockBlobClient.generateSas(sasSignatureValues);
+        String imageUrl = blockBlobClient.getBlobUrl();
+        String sasToken = imageUrl + "?" +blockBlobClient.generateSas(sasSignatureValues);
 
-        return blockBlobClient.getBlobUrl() + "?" + sasToken;
+        return new ImageSasToken(
+                sasToken,
+                newFileName,
+                imageUrl);
     }
 
     private void validateFileName(String fileName) {
