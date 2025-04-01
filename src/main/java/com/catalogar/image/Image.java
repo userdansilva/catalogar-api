@@ -31,6 +31,13 @@ public class Image {
     private UUID id;
 
     @Column(
+            name = "name",
+            nullable = false,
+            columnDefinition = "TEXT"
+    )
+    private String name;
+
+    @Column(
             name = "url",
             columnDefinition = "TEXT",
             nullable = false
@@ -68,7 +75,8 @@ public class Image {
     )
     private LocalDateTime createdAt;
 
-    public Image(String url, Short position, CatalogItem catalogItem) {
+    public Image(String name, String url, Short position, CatalogItem catalogItem) {
+        this.name = name;
         this.url = url;
         this.position = position;
         this.catalogItem = catalogItem;
@@ -91,6 +99,14 @@ public class Image {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Short getPosition() {
@@ -121,12 +137,12 @@ public class Image {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Image image = (Image) o;
-        return Objects.equals(id, image.id) && Objects.equals(url, image.url) && Objects.equals(position, image.position) && Objects.equals(catalogItem, image.catalogItem) && Objects.equals(createdAt, image.createdAt);
+        return Objects.equals(id, image.id) && Objects.equals(url, image.url) && Objects.equals(name, image.name) && Objects.equals(position, image.position) && Objects.equals(catalogItem, image.catalogItem) && Objects.equals(createdAt, image.createdAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, url, position, catalogItem, createdAt);
+        return Objects.hash(id, url, name, position, catalogItem, createdAt);
     }
 
     @Override
@@ -134,6 +150,7 @@ public class Image {
         return "Image{" +
                 "id=" + id +
                 ", url='" + url + '\'' +
+                ", name='" + name + '\'' +
                 ", position=" + position +
                 ", catalogItem=" + catalogItem +
                 ", createdAt=" + createdAt +

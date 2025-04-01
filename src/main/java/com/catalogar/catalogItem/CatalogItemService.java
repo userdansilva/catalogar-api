@@ -182,10 +182,11 @@ public class CatalogItemService {
 
         return imageRequests.stream()
                 .map((imageRequest -> {
-                    String url = blobUrl + imageRequest.name();
+                    String name = imageRequest.name();
+                    String url = blobUrl + name;
                     Short position = (short) imageRequest.position();
 
-                    return new Image(url, position, catalogItem);
+                    return new Image(name, url, position, catalogItem);
                 }))
                 .toList();
     }
