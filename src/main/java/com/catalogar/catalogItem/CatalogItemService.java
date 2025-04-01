@@ -202,8 +202,8 @@ public class CatalogItemService {
 
     private Long generateRandomNumber() {
         Random random = new Random();
-        int min = 100;
-        int max = 999_999;
+        int min = 1_000;
+        int max = 9_999;
 
         return (long) (random.nextInt((max - min) + 1) + min);
     }
