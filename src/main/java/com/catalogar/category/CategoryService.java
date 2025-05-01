@@ -1,11 +1,13 @@
 package com.catalogar.category;
 
 import com.catalogar.catalog.Catalog;
+import com.catalogar.catalogItem.CatalogItem;
 import com.catalogar.common.exception.ResourceNotFoundException;
 import com.catalogar.common.exception.UniqueFieldConflictException;
 import com.catalogar.common.message.MessageService;
 import com.catalogar.user.User;
 import com.catalogar.user.UserService;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -139,14 +141,13 @@ public class CategoryService {
         return categoryRepository.existsBySlugAndIdNotAndCatalog(slug, id, catalog);
     }
 
+    @Transactional
     public void delete(UUID id, User user) {
         Catalog catalog = getUserCurrentCatalog(user);
-        boolean existsById = existsByIdAndCatalog(id, catalog);
+        Category category = getById(id, user);
 
-        if (!existsById) {
-            throw new ResourceNotFoundException(
-                    messageService.getMessage("error.category.not_found")
-            );
+        for (CatalogItem item : category.getCatalogItems()) {
+            item.getCategories().remove(category);
         }
 
         deleteByIdAndCatalog(id, catalog);
