@@ -78,7 +78,8 @@ public class Product {
 
     @OneToMany(
             mappedBy = "product",
-            orphanRemoval = true
+            orphanRemoval = true,
+            cascade = CascadeType.ALL
     )
     private List<CatalogItem> catalogItems = new ArrayList<>();
 
