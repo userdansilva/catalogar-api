@@ -20,7 +20,6 @@ public class ImageService {
     private final BlobServiceClient blobServiceClient;
     private final String containerName;
     private final MessageService messageService;
-    private final ImageRepository imageRepository;
 
     public ImageService(
             @Value("${azure.storage.connection-string}") String connectionString,
@@ -33,7 +32,6 @@ public class ImageService {
                 .buildClient();
         this.containerName = containerName;
         this.messageService = messageService;
-        this.imageRepository = imageRepository;
     }
 
     public ImageSasToken generateSasToken(String fileName) {
@@ -56,7 +54,7 @@ public class ImageService {
                 .setProtocol(SasProtocol.HTTPS_ONLY);
 
         String imageUrl = blockBlobClient.getBlobUrl();
-        String sasToken = imageUrl + "?" +blockBlobClient.generateSas(sasSignatureValues);
+        String sasToken = imageUrl + "?" + blockBlobClient.generateSas(sasSignatureValues);
 
         return new ImageSasToken(
                 sasToken,

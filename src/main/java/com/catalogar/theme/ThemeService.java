@@ -4,6 +4,10 @@ import com.catalogar.catalog.Catalog;
 import com.catalogar.common.exception.ResourceNotFoundException;
 import com.catalogar.common.exception.UniqueFieldConflictException;
 import com.catalogar.common.message.MessageService;
+import com.catalogar.image.ImageService;
+import com.catalogar.logo.Logo;
+import com.catalogar.logo.LogoMapper;
+import com.catalogar.logo.LogoRequest;
 import com.catalogar.user.User;
 import com.catalogar.user.UserService;
 import org.springframework.stereotype.Service;
@@ -14,12 +18,16 @@ public class ThemeService {
     private final MessageService messageService;
     private final ThemeRepository themeRepository;
     private final ThemeMapper themeMapper;
+    private final LogoMapper logoMapper;
+    private final ImageService imageService;
 
-    public ThemeService(UserService userService, MessageService messageService, ThemeRepository themeRepository, ThemeMapper themeMapper) {
+    public ThemeService(UserService userService, MessageService messageService, ThemeRepository themeRepository, ThemeMapper themeMapper, LogoMapper logoMapper, ImageService imageService) {
         this.userService = userService;
         this.messageService = messageService;
         this.themeRepository = themeRepository;
         this.themeMapper = themeMapper;
+        this.logoMapper = logoMapper;
+        this.imageService = imageService;
     }
 
     public Theme create(ThemeRequest request, User user) {
@@ -43,7 +51,23 @@ public class ThemeService {
         Theme theme = themeMapper.toTheme(request);
         theme.setCatalog(catalog);
 
+        if (request.logo() != null) {
+            Logo logo = toLogo(request.logo(), theme);
+            theme.setLogo(logo);
+        }
+
         return themeRepository.save(theme);
+    }
+
+    private Logo toLogo(LogoRequest request, Theme theme) {
+        String blobUrl = imageService.getBlobUrl();
+
+        String name = request.name();
+        String url = blobUrl + name;
+        Short width = (short) request.width();
+        Short height = (short) request.height();
+
+        return new Logo(name, url, width, height, theme);
     }
 
     public Theme update(ThemeRequest request, User user) {
@@ -56,13 +80,18 @@ public class ThemeService {
             );
         }
 
-        return update(request, currentCatalog.getTheme());
+        Theme theme = currentCatalog.getTheme();
+
+        theme.setLogo(request.logo() != null
+                ? toLogo(request.logo(), theme)
+                : null);
+
+        return update(request, theme);
     }
 
     private Theme update(ThemeRequest request, Theme theme) {
         theme.setPrimaryColor(request.primaryColor());
         theme.setSecondaryColor(request.secondaryColor());
-        theme.setLogoUrl(request.logoUrl());
 
         return themeRepository.save(theme);
     }

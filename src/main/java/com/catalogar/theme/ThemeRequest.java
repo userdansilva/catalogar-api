@@ -1,7 +1,8 @@
 package com.catalogar.theme;
 
 import com.catalogar.common.validation.Hexadecimal;
-import com.catalogar.common.validation.Url;
+import com.catalogar.logo.LogoRequest;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 
 public record ThemeRequest(
@@ -13,7 +14,7 @@ public record ThemeRequest(
         @Hexadecimal(message = "Cor secundária do tema deve ser hexadecimal. Exemplo: #FFF000")
         String secondaryColor,
 
-        @Url
-        String logoUrl
+        @Valid
+        LogoRequest logo
 ) {
 }

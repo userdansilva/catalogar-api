@@ -1,6 +1,7 @@
 package com.catalogar.theme;
 
 import com.catalogar.catalog.Catalog;
+import com.catalogar.logo.Logo;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -38,12 +39,6 @@ public class Theme {
     )
     private String secondaryColor;
 
-    @Column(
-            name = "logo_url",
-            columnDefinition = "TEXT"
-    )
-    private String logoUrl;
-
     @CreatedDate
     @Column(
             name = "created_at",
@@ -76,13 +71,27 @@ public class Theme {
     )
     private Catalog catalog;
 
+    @OneToOne(
+            mappedBy = "theme",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private Logo logo;
+
     public Theme() {
     }
 
-    public Theme(String primaryColor, String secondaryColor, String logoUrl) {
+    public Theme(String primaryColor, String secondaryColor) {
         this.primaryColor = primaryColor;
         this.secondaryColor = secondaryColor;
-        this.logoUrl = logoUrl;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getPrimaryColor() {
@@ -99,14 +108,6 @@ public class Theme {
 
     public void setSecondaryColor(String secondaryColor) {
         this.secondaryColor = secondaryColor;
-    }
-
-    public String getLogoUrl() {
-        return logoUrl;
-    }
-
-    public void setLogoUrl(String logoUrl) {
-        this.logoUrl = logoUrl;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -133,15 +134,36 @@ public class Theme {
         this.catalog = catalog;
     }
 
+    public Logo getLogo() {
+        return logo;
+    }
+
+    public void setLogo(Logo logo) {
+        this.logo = logo;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Theme theme = (Theme) o;
-        return Objects.equals(id, theme.id) && Objects.equals(primaryColor, theme.primaryColor) && Objects.equals(secondaryColor, theme.secondaryColor) && Objects.equals(logoUrl, theme.logoUrl) && Objects.equals(createdAt, theme.createdAt) && Objects.equals(updatedAt, theme.updatedAt) && Objects.equals(catalog, theme.catalog);
+        return Objects.equals(id, theme.id) && Objects.equals(primaryColor, theme.primaryColor) && Objects.equals(secondaryColor, theme.secondaryColor) && Objects.equals(createdAt, theme.createdAt) && Objects.equals(updatedAt, theme.updatedAt) && Objects.equals(catalog, theme.catalog) && Objects.equals(logo, theme.logo);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, primaryColor, secondaryColor, logoUrl, createdAt, updatedAt, catalog);
+        return Objects.hash(id, primaryColor, secondaryColor, createdAt, updatedAt, catalog, logo);
+    }
+
+    @Override
+    public String toString() {
+        return "Theme{" +
+                "id=" + id +
+                ", primaryColor='" + primaryColor + '\'' +
+                ", secondaryColor='" + secondaryColor + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", catalog=" + catalog +
+                ", logo=" + logo +
+                '}';
     }
 }
