@@ -28,7 +28,7 @@ public class ThemeMapper {
 
     public ThemeDto toDto(Theme theme) {
         LogoDto logo = Optional.ofNullable(theme.getLogo())
-                .map(logoMapper::toLogoDto)
+                .map(logoMapper::toDto)
                 .orElse(null);
 
         return new ThemeDto(

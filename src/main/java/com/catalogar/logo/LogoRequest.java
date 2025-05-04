@@ -9,10 +9,10 @@ public record LogoRequest(
         @UuidImage(message = "Nome e/ou tipo de logo inválida")
         String name,
 
-        @Min(value = 1, message = "Largura da imagem deve ser maior ou igual a 1")
+        @Min(value = 1, message = "Largura da logo deve ser maior ou igual a 1")
         int width,
 
-        @Min(value = 1, message = "Altura da imagem deve ser maior ou igual a 1")
+        @Min(value = 1, message = "Altura da logo deve ser maior ou igual a 1")
         int height
 ) {
 }

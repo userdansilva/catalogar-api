@@ -4,10 +4,9 @@ import com.catalogar.catalog.Catalog;
 import com.catalogar.common.exception.ResourceNotFoundException;
 import com.catalogar.common.exception.UniqueFieldConflictException;
 import com.catalogar.common.message.MessageService;
-import com.catalogar.image.ImageService;
 import com.catalogar.logo.Logo;
-import com.catalogar.logo.LogoMapper;
 import com.catalogar.logo.LogoRequest;
+import com.catalogar.storage.StorageService;
 import com.catalogar.user.User;
 import com.catalogar.user.UserService;
 import org.springframework.stereotype.Service;
@@ -18,16 +17,14 @@ public class ThemeService {
     private final MessageService messageService;
     private final ThemeRepository themeRepository;
     private final ThemeMapper themeMapper;
-    private final LogoMapper logoMapper;
-    private final ImageService imageService;
+    private final StorageService storageService;
 
-    public ThemeService(UserService userService, MessageService messageService, ThemeRepository themeRepository, ThemeMapper themeMapper, LogoMapper logoMapper, ImageService imageService) {
+    public ThemeService(UserService userService, MessageService messageService, ThemeRepository themeRepository, ThemeMapper themeMapper, StorageService storageService) {
         this.userService = userService;
         this.messageService = messageService;
         this.themeRepository = themeRepository;
         this.themeMapper = themeMapper;
-        this.logoMapper = logoMapper;
-        this.imageService = imageService;
+        this.storageService = storageService;
     }
 
     public Theme create(ThemeRequest request, User user) {
@@ -60,7 +57,7 @@ public class ThemeService {
     }
 
     private Logo toLogo(LogoRequest request, Theme theme) {
-        String blobUrl = imageService.getBlobUrl();
+        String blobUrl = storageService.getBlobUrl();
 
         String name = request.name();
         String url = blobUrl + name;

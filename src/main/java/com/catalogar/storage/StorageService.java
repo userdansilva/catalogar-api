@@ -1,4 +1,4 @@
-package com.catalogar.image;
+package com.catalogar.storage;
 
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobServiceClient;
@@ -16,16 +16,15 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Service
-public class ImageService {
+public class StorageService {
     private final BlobServiceClient blobServiceClient;
     private final String containerName;
     private final MessageService messageService;
 
-    public ImageService(
+    public StorageService(
             @Value("${azure.storage.connection-string}") String connectionString,
             @Value("${azure.storage.container-name}") String containerName,
-            MessageService messageService,
-            ImageRepository imageRepository
+            MessageService messageService
     ) {
         this.blobServiceClient = new BlobServiceClientBuilder()
                 .connectionString(connectionString)
@@ -34,7 +33,7 @@ public class ImageService {
         this.messageService = messageService;
     }
 
-    public ImageSasToken generateSasToken(String fileName) {
+    public Storage generateSasToken(String fileName) {
         validateFileName(fileName);
 
         String fileExtension = fileName.substring(fileName.lastIndexOf("."));
@@ -56,7 +55,7 @@ public class ImageService {
         String imageUrl = blockBlobClient.getBlobUrl();
         String sasToken = imageUrl + "?" + blockBlobClient.generateSas(sasSignatureValues);
 
-        return new ImageSasToken(
+        return new Storage(
                 sasToken,
                 newFileName,
                 imageUrl);

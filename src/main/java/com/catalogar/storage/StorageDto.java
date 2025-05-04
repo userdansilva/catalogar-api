@@ -1,6 +1,6 @@
-package com.catalogar.image;
+package com.catalogar.storage;
 
-public record ImageSasTokenDto(
+public record StorageDto(
         String sasToken,
         String name,
         String url

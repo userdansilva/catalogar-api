@@ -8,9 +8,9 @@ import com.catalogar.common.exception.ResourceNotFoundException;
 import com.catalogar.common.message.MessageService;
 import com.catalogar.image.Image;
 import com.catalogar.image.ImageRequest;
-import com.catalogar.image.ImageService;
 import com.catalogar.product.Product;
 import com.catalogar.product.ProductService;
+import com.catalogar.storage.StorageService;
 import com.catalogar.user.User;
 import com.catalogar.user.UserService;
 import org.springframework.data.domain.Page;
@@ -30,16 +30,16 @@ public class CatalogItemService {
     private final CategoryService categoryService;
     private final CatalogItemMapper catalogItemMapper;
     private final CatalogItemRepository catalogItemRepository;
-    private final ImageService imageService;
+    private final StorageService storageService;
 
-    public CatalogItemService(UserService userService, ProductService productService, MessageService messageService, CategoryService categoryService, CatalogItemMapper catalogItemMapper, CatalogItemRepository catalogItemRepository, ImageService imageService) {
+    public CatalogItemService(UserService userService, ProductService productService, MessageService messageService, CategoryService categoryService, CatalogItemMapper catalogItemMapper, CatalogItemRepository catalogItemRepository, StorageService storageService) {
         this.userService = userService;
         this.productService = productService;
         this.messageService = messageService;
         this.categoryService = categoryService;
         this.catalogItemMapper = catalogItemMapper;
         this.catalogItemRepository = catalogItemRepository;
-        this.imageService = imageService;
+        this.storageService = storageService;
     }
 
     public Page<CatalogItem> getAll(CatalogItemFilter filter, User user) {
@@ -178,7 +178,7 @@ public class CatalogItemService {
     }
 
     private List<Image> toImages(List<ImageRequest> imageRequests, CatalogItem catalogItem) {
-        String blobUrl = imageService.getBlobUrl();
+        String blobUrl = storageService.getBlobUrl();
 
         return imageRequests.stream()
                 .map((imageRequest -> {

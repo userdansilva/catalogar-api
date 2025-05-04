@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class LogoMapper {
-    public LogoDto toLogoDto(Logo logo) {
+    public LogoDto toDto(Logo logo) {
         return new LogoDto(
                 logo.getId(),
                 logo.getName(),
