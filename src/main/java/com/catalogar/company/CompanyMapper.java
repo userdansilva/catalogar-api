@@ -8,6 +8,7 @@ public class CompanyMapper {
     public Company toCompany(CompanyRequest request) {
         return new Company(
                 request.name(),
+                request.description(),
                 request.mainSiteUrl(),
                 request.phoneNumber(),
                 request.businessTypeDescription()
@@ -21,6 +22,7 @@ public class CompanyMapper {
     public CompanyDto toDto(Company company) {
         return new CompanyDto(
                 company.getName(),
+                company.getDescription(),
                 company.getMainSiteUrl(),
                 company.getPhoneNumber(),
                 company.getBusinessTypeDescription(),

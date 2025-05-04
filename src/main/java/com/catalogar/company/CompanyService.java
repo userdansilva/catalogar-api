@@ -62,6 +62,7 @@ public class CompanyService {
 
     private Company update(CompanyRequest request, Company company) {
         company.setName(request.name());
+        company.setDescription(request.description());
         company.setMainSiteUrl(request.mainSiteUrl());
         company.setPhoneNumber(request.phoneNumber());
         company.setBusinessTypeDescription(request.businessTypeDescription());
