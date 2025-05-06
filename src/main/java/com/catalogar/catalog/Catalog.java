@@ -78,13 +78,15 @@ public class Catalog {
 
     @OneToOne(
             mappedBy = "catalog",
-            orphanRemoval = true
+            orphanRemoval = true,
+            cascade = CascadeType.ALL
     )
     private Company company;
 
     @OneToOne(
             mappedBy = "catalog",
-            orphanRemoval = true
+            orphanRemoval = true,
+            cascade = CascadeType.ALL
     )
     private Theme theme;
 

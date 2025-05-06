@@ -48,10 +48,9 @@ public class ThemeService {
         Theme theme = themeMapper.toTheme(request);
         theme.setCatalog(catalog);
 
-        if (request.logo() != null) {
-            Logo logo = toLogo(request.logo(), theme);
-            theme.setLogo(logo);
-        }
+        theme.setLogo(request.logo() != null
+                ? toLogo(request.logo(), theme)
+                : null);
 
         return themeRepository.save(theme);
     }
@@ -79,16 +78,16 @@ public class ThemeService {
 
         Theme theme = currentCatalog.getTheme();
 
-        theme.setLogo(request.logo() != null
-                ? toLogo(request.logo(), theme)
-                : null);
-
         return update(request, theme);
     }
 
     private Theme update(ThemeRequest request, Theme theme) {
         theme.setPrimaryColor(request.primaryColor());
         theme.setSecondaryColor(request.secondaryColor());
+
+        theme.setLogo(request.logo() != null
+                ? toLogo(request.logo(), theme)
+                : null);
 
         return themeRepository.save(theme);
     }
