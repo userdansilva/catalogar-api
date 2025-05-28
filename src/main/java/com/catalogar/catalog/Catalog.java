@@ -25,10 +25,6 @@ import java.util.UUID;
                 @UniqueConstraint(
                         name = "catalog_slug_unique",
                         columnNames = "slug"
-                ),
-                @UniqueConstraint(
-                        name = "user_id_unique",
-                        columnNames = "user_id"
                 )
         }
 )

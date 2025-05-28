@@ -1,8 +1,8 @@
 package com.catalogar.storage;
 
 public record StorageDto(
-        String sasToken,
-        String name,
-        String url
+        String fileName,
+        String uploadUrl,
+        String accessUrl
 ) {
 }

@@ -2,13 +2,11 @@ package com.catalogar.storage;
 
 import com.catalogar.common.dto.ApiResponse;
 import com.catalogar.user.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/storage")
@@ -23,13 +21,13 @@ public class StorageController {
         this.storageMapper = storageMapper;
     }
 
-    @GetMapping("/generate-sas-token")
+    @PostMapping("/generate-sas-token")
     public ResponseEntity<ApiResponse<StorageDto>> generateSasToken(
             @AuthenticationPrincipal Jwt jwt,
-            @RequestParam String fileName
+            @Valid @RequestBody StorageRequest request
     ) {
         userService.getByJwtOrCreate(jwt);
-        Storage storage = storageService.generateSasToken(fileName);
+        Storage storage = storageService.generateSasToken(request);
 
         return ResponseEntity.ok().body(storageMapper.toApiResponse(storage));
     }

@@ -1,13 +1,14 @@
 package com.catalogar.logo;
 
-import com.catalogar.common.validation.UuidImage;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 
 public record LogoRequest(
-        @NotEmpty(message = "Nome da logo é obrigatória")
-        @UuidImage(message = "Nome e/ou tipo de logo inválida")
-        String name,
+        @NotEmpty(message = "Nome do arquivo da logo é obrigatório")
+        String fileName,
+
+        @NotEmpty(message = "Nome original do arquivo da logo é obrigatório")
+        String originalFileName,
 
         @Min(value = 1, message = "Largura da logo deve ser maior ou igual a 1")
         int width,

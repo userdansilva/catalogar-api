@@ -3,58 +3,61 @@ package com.catalogar.storage;
 import java.util.Objects;
 
 public class Storage {
-    private String sasToken;
-    private String name;
-    private String url;
+    private String fileName;
+    private String uploadUrl;
+    private String accessUrl;
 
-    public String getSasToken() {
-        return sasToken;
+    public String getFileName() {
+        return fileName;
     }
 
-    public void setSasToken(String sasToken) {
-        this.sasToken = sasToken;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
-    public String getName() {
-        return name;
+    public String getUploadUrl() {
+        return uploadUrl;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUploadUrl(String uploadUrl) {
+        this.uploadUrl = uploadUrl;
     }
 
-    public String getUrl() {
-        return url;
+    public String getAccessUrl() {
+        return accessUrl;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setAccessUrl(String accessUrl) {
+        this.accessUrl = accessUrl;
     }
 
-    public Storage(String sasToken, String name, String url) {
-        this.sasToken = sasToken;
-        this.name = name;
-        this.url = url;
+    public Storage(String fileName, String uploadUrl, String accessUrl) {
+        this.fileName = fileName;
+        this.uploadUrl = uploadUrl;
+        this.accessUrl = accessUrl;
+    }
+
+    public Storage() {
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Storage storage = (Storage) o;
-        return Objects.equals(sasToken, storage.sasToken) && Objects.equals(name, storage.name) && Objects.equals(url, storage.url);
+        return Objects.equals(fileName, storage.fileName) && Objects.equals(uploadUrl, storage.uploadUrl) && Objects.equals(accessUrl, storage.accessUrl);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(sasToken, name, url);
+        return Objects.hash(fileName, uploadUrl, accessUrl);
     }
 
     @Override
     public String toString() {
         return "Storage{" +
-                "sasToken='" + sasToken + '\'' +
-                ", name='" + name + '\'' +
-                ", url='" + url + '\'' +
+                "fileName='" + fileName + '\'' +
+                ", uploadUrl='" + uploadUrl + '\'' +
+                ", accessUrl='" + accessUrl + '\'' +
                 '}';
     }
 }

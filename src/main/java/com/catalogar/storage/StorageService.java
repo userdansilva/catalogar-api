@@ -7,8 +7,6 @@ import com.azure.storage.blob.sas.BlobSasPermission;
 import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
 import com.azure.storage.blob.specialized.BlockBlobClient;
 import com.azure.storage.common.sas.SasProtocol;
-import com.catalogar.common.exception.BadRequestException;
-import com.catalogar.common.message.MessageService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -19,28 +17,25 @@ import java.util.UUID;
 public class StorageService {
     private final BlobServiceClient blobServiceClient;
     private final String containerName;
-    private final MessageService messageService;
 
     public StorageService(
             @Value("${azure.storage.connection-string}") String connectionString,
-            @Value("${azure.storage.container-name}") String containerName,
-            MessageService messageService
+            @Value("${azure.storage.container-name}") String containerName
     ) {
         this.blobServiceClient = new BlobServiceClientBuilder()
                 .connectionString(connectionString)
                 .buildClient();
         this.containerName = containerName;
-        this.messageService = messageService;
     }
 
-    public Storage generateSasToken(String fileName) {
-        validateFileName(fileName);
+    public Storage generateSasToken(StorageRequest request) {
+        FileType fileType = FileType.valueOf(request.fileType());
 
-        String fileExtension = fileName.substring(fileName.lastIndexOf("."));
-        String newFileName = UUID.randomUUID() + fileExtension;
+        String fileExtension = getFileExtension(fileType);
+        String fileName = UUID.randomUUID() + fileExtension;
 
         BlobClient blobClient = blobServiceClient.getBlobContainerClient(containerName)
-                .getBlobClient(newFileName);
+                .getBlobClient(fileName);
         BlockBlobClient blockBlobClient = blobClient.getBlockBlobClient();
 
         BlobSasPermission sasPermission = new BlobSasPermission()
@@ -52,21 +47,20 @@ public class StorageService {
         var sasSignatureValues = new BlobServiceSasSignatureValues(expiryTime, sasPermission)
                 .setProtocol(SasProtocol.HTTPS_ONLY);
 
-        String imageUrl = blockBlobClient.getBlobUrl();
-        String sasToken = imageUrl + "?" + blockBlobClient.generateSas(sasSignatureValues);
+        String accessUrl = blockBlobClient.getBlobUrl();
+        String uploadUrl = accessUrl + "?" + blockBlobClient.generateSas(sasSignatureValues);
 
-        return new Storage(
-                sasToken,
-                newFileName,
-                imageUrl);
+        return new Storage(fileName, uploadUrl, accessUrl);
     }
+    
+    public String getFileExtension(FileType fileType) {
+        return switch (fileType) {
+            case JPG -> ".jpg";
+            case PNG -> ".png";
+            case SVG -> ".svg";
 
-    private void validateFileName(String fileName) {
-        if (!fileName.contains(".")) {
-            throw new BadRequestException(
-                    messageService.getMessage("error.image.invalid_filename")
-            );
-        }
+            default -> ".webp";
+        };
     }
 
     public String getBlobUrl() {

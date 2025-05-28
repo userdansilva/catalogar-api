@@ -7,7 +7,7 @@ public class ImageMapper {
     public ImageDto toDto(Image image) {
         return new ImageDto(
             image.getId(),
-            image.getName(),
+            image.getFileName(),
             image.getUrl(),
             image.getPosition(),
             image.getCreatedAt()

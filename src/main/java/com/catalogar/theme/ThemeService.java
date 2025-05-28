@@ -58,8 +58,8 @@ public class ThemeService {
     private Logo toLogo(LogoRequest request, Theme theme) {
         String blobUrl = storageService.getBlobUrl();
 
-        String name = request.name();
-        String url = blobUrl + name;
+        String name = request.originalFileName();
+        String url = blobUrl + request.fileName();
         Short width = (short) request.width();
         Short height = (short) request.height();
 

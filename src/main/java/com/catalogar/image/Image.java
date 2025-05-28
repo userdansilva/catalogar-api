@@ -31,11 +31,11 @@ public class Image {
     private UUID id;
 
     @Column(
-            name = "name",
+            name = "file_name",
             nullable = false,
             columnDefinition = "TEXT"
     )
-    private String name;
+    private String fileName;
 
     @Column(
             name = "url",
@@ -75,8 +75,10 @@ public class Image {
     )
     private LocalDateTime createdAt;
 
-    public Image(String name, String url, Short position, CatalogItem catalogItem) {
-        this.name = name;
+
+
+    public Image(String fileName, String url, Short position, CatalogItem catalogItem) {
+        this.fileName = fileName;
         this.url = url;
         this.position = position;
         this.catalogItem = catalogItem;
@@ -101,12 +103,12 @@ public class Image {
         this.url = url;
     }
 
-    public String getName() {
-        return name;
+    public String getFileName() {
+        return fileName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
     public Short getPosition() {
@@ -137,22 +139,21 @@ public class Image {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Image image = (Image) o;
-        return Objects.equals(id, image.id) && Objects.equals(url, image.url) && Objects.equals(name, image.name) && Objects.equals(position, image.position) && Objects.equals(catalogItem, image.catalogItem) && Objects.equals(createdAt, image.createdAt);
+        return Objects.equals(id, image.id) && Objects.equals(fileName, image.fileName) && Objects.equals(url, image.url) && Objects.equals(position, image.position) && Objects.equals(createdAt, image.createdAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, url, name, position, catalogItem, createdAt);
+        return Objects.hash(id, fileName, url, position, createdAt);
     }
 
     @Override
     public String toString() {
         return "Image{" +
                 "id=" + id +
+                ", fileName='" + fileName + '\'' +
                 ", url='" + url + '\'' +
-                ", name='" + name + '\'' +
                 ", position=" + position +
-                ", catalogItem=" + catalogItem +
                 ", createdAt=" + createdAt +
                 '}';
     }

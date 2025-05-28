@@ -100,7 +100,7 @@ public class CatalogItemService {
 
     private void validateImages(List<ImageRequest> images) {
         List<String> imageNames = images.stream()
-                .map(ImageRequest::name)
+                .map(ImageRequest::fileName)
                 .toList();
 
         validateUnique(imageNames);
@@ -182,7 +182,7 @@ public class CatalogItemService {
 
         return imageRequests.stream()
                 .map((imageRequest -> {
-                    String name = imageRequest.name();
+                    String name = imageRequest.fileName();
                     String url = blobUrl + name;
                     Short position = (short) imageRequest.position();
 

@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 public class StorageMapper {
     public ApiResponse<StorageDto> toApiResponse(Storage storage) {
         StorageDto storageDto = new StorageDto(
-                storage.getSasToken(),
-                storage.getName(),
-                storage.getUrl()
+                storage.getFileName(),
+                storage.getUploadUrl(),
+                storage.getAccessUrl()
         );
 
         return new ApiResponse<>(storageDto);
