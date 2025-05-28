@@ -73,7 +73,8 @@ public class User {
 
     @OneToMany(
             mappedBy = "user",
-            orphanRemoval = true
+            orphanRemoval = true,
+            cascade = CascadeType.ALL
     )
     private List<Catalog> catalogs = new ArrayList<>();
 

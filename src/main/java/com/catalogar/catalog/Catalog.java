@@ -25,6 +25,10 @@ import java.util.UUID;
                 @UniqueConstraint(
                         name = "catalog_slug_unique",
                         columnNames = "slug"
+                ),
+                @UniqueConstraint(
+                        name = "user_id_unique",
+                        columnNames = "user_id"
                 )
         }
 )
@@ -78,6 +82,7 @@ public class Catalog {
 
     @OneToOne(
             mappedBy = "catalog",
+            fetch = FetchType.EAGER,
             orphanRemoval = true,
             cascade = CascadeType.ALL
     )
@@ -85,15 +90,13 @@ public class Catalog {
 
     @OneToOne(
             mappedBy = "catalog",
+            fetch = FetchType.EAGER,
             orphanRemoval = true,
             cascade = CascadeType.ALL
     )
     private Theme theme;
 
-    @ManyToOne(
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY
-    )
+    @ManyToOne
     @JoinColumn(
             name = "user_id",
             referencedColumnName = "id",

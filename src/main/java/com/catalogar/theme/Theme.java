@@ -13,7 +13,15 @@ import java.util.UUID;
 
 @Entity(name = "Theme")
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "theme")
+@Table(
+        name = "theme",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "catalog_id_unique",
+                        columnNames = "catalog_id"
+                )
+        }
+)
 public class Theme {
 
     @Id
@@ -56,10 +64,7 @@ public class Theme {
     )
     private LocalDateTime updatedAt;
 
-    @OneToOne(
-            cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER
-    )
+    @OneToOne
     @JoinColumn(
             name = "catalog_id",
             referencedColumnName = "id",
@@ -73,8 +78,9 @@ public class Theme {
 
     @OneToOne(
             mappedBy = "theme",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
+            fetch = FetchType.EAGER,
+            orphanRemoval = true,
+            cascade = CascadeType.ALL
     )
     private Logo logo;
 

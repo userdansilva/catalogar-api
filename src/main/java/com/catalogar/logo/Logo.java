@@ -15,8 +15,12 @@ import java.util.UUID;
         name = "logo",
         uniqueConstraints = {
                 @UniqueConstraint(
-                        name = "logo_url_unique",
+                        name = "url_unique",
                         columnNames = "url"
+                ),
+                @UniqueConstraint(
+                        name = "theme_id_unique",
+                        columnNames = "theme_id"
                 )
         }
 )
@@ -67,10 +71,7 @@ public class Logo {
     )
     private LocalDateTime createdAt;
 
-    @OneToOne(
-            cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER
-    )
+    @OneToOne
     @JoinColumn(
             name = "theme_id",
             referencedColumnName = "id",
@@ -145,6 +146,14 @@ public class Logo {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Theme getTheme() {
+        return theme;
+    }
+
+    public void setTheme(Theme theme) {
+        this.theme = theme;
     }
 
     @Override

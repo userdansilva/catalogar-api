@@ -72,10 +72,7 @@ public class Company {
     )
     private LocalDateTime updatedAt;
 
-    @OneToOne(
-            cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER
-    )
+    @OneToOne
     @JoinColumn(
             name = "catalog_id",
             referencedColumnName = "id",
