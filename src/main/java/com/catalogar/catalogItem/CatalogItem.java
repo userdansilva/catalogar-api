@@ -3,7 +3,7 @@ package com.catalogar.catalogItem;
 import com.catalogar.catalog.Catalog;
 import com.catalogar.category.Category;
 import com.catalogar.image.Image;
-import com.catalogar.product.Product;
+import com.catalogar.productType.ProductType;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -98,14 +98,14 @@ public class CatalogItem {
             fetch = FetchType.LAZY
     )
     @JoinColumn(
-            name = "product_id",
+            name = "product_type_id",
             referencedColumnName = "id",
             foreignKey = @ForeignKey(
-                    name = "catalog_item_product_id_fk"
+                    name = "catalog_item_product_type_id_fk"
             ),
             nullable = false
     )
-    private Product product;
+    private ProductType productType;
 
     @ManyToMany(
             cascade = CascadeType.PERSIST,
@@ -199,12 +199,12 @@ public class CatalogItem {
         this.updatedAt = updatedAt;
     }
 
-    public Product getProduct() {
-        return product;
+    public ProductType getProductType() {
+        return productType;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setProductType(ProductType productType) {
+        this.productType = productType;
     }
 
     public List<Category> getCategories() {
@@ -244,12 +244,12 @@ public class CatalogItem {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         CatalogItem that = (CatalogItem) o;
-        return Objects.equals(id, that.id) && Objects.equals(title, that.title) && Objects.equals(caption, that.caption) && Objects.equals(price, that.price) && Objects.equals(reference, that.reference) && Objects.equals(disabledAt, that.disabledAt) && Objects.equals(createdAt, that.createdAt) && Objects.equals(updatedAt, that.updatedAt) && Objects.equals(catalog, that.catalog) && Objects.equals(product, that.product) && Objects.equals(categories, that.categories) && Objects.equals(images, that.images);
+        return Objects.equals(id, that.id) && Objects.equals(title, that.title) && Objects.equals(caption, that.caption) && Objects.equals(price, that.price) && Objects.equals(reference, that.reference) && Objects.equals(disabledAt, that.disabledAt) && Objects.equals(createdAt, that.createdAt) && Objects.equals(updatedAt, that.updatedAt) && Objects.equals(catalog, that.catalog) && Objects.equals(productType, that.productType) && Objects.equals(categories, that.categories) && Objects.equals(images, that.images);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, caption, price, reference, disabledAt, createdAt, updatedAt, catalog, product, categories, images);
+        return Objects.hash(id, title, caption, price, reference, disabledAt, createdAt, updatedAt, catalog, productType, categories, images);
     }
 
     @Override
@@ -264,7 +264,7 @@ public class CatalogItem {
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 ", catalog=" + catalog +
-                ", product=" + product +
+                ", productType=" + productType +
                 ", categories=" + categories +
                 ", images=" + images +
                 '}';

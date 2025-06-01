@@ -1,4 +1,4 @@
-package com.catalogar.product;
+package com.catalogar.productType;
 
 import com.catalogar.catalog.Catalog;
 import com.catalogar.catalogItem.CatalogItem;
@@ -13,10 +13,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-@Entity(name = "Product")
+@Entity(name = "ProductType")
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "product")
-public class Product {
+@Table(name = "product_type")
+public class ProductType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -69,7 +69,7 @@ public class Product {
             name = "catalog_id",
             referencedColumnName = "id",
             foreignKey = @ForeignKey(
-                    name = "product_catalog_id_fk"
+                    name = "product_type_catalog_id_fk"
             ),
             updatable = false,
             nullable = false
@@ -77,7 +77,7 @@ public class Product {
     private Catalog catalog;
 
     @OneToMany(
-            mappedBy = "product",
+            mappedBy = "productType",
             orphanRemoval = true,
             cascade = CascadeType.ALL
     )
@@ -147,10 +147,10 @@ public class Product {
         this.catalogItems = catalogItems;
     }
 
-    public Product() {
+    public ProductType() {
     }
 
-    public Product(String name, String slug) {
+    public ProductType(String name, String slug) {
         this.name = name;
         this.slug = slug;
     }
@@ -159,8 +159,8 @@ public class Product {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        Product product = (Product) o;
-        return Objects.equals(id, product.id) && Objects.equals(name, product.name) && Objects.equals(slug, product.slug) && Objects.equals(disabledAt, product.disabledAt) && Objects.equals(createdAt, product.createdAt) && Objects.equals(updatedAt, product.updatedAt) && Objects.equals(catalog, product.catalog) && Objects.equals(catalogItems, product.catalogItems);
+        ProductType productType = (ProductType) o;
+        return Objects.equals(id, productType.id) && Objects.equals(name, productType.name) && Objects.equals(slug, productType.slug) && Objects.equals(disabledAt, productType.disabledAt) && Objects.equals(createdAt, productType.createdAt) && Objects.equals(updatedAt, productType.updatedAt) && Objects.equals(catalog, productType.catalog) && Objects.equals(catalogItems, productType.catalogItems);
     }
 
     @Override
@@ -170,7 +170,7 @@ public class Product {
 
     @Override
     public String toString() {
-        return "Product{" +
+        return "ProductType{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", slug='" + slug + '\'' +

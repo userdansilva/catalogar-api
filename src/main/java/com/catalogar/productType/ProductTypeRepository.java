@@ -1,4 +1,4 @@
-package com.catalogar.product;
+package com.catalogar.productType;
 
 import com.catalogar.catalog.Catalog;
 import jakarta.transaction.Transactional;
@@ -11,16 +11,16 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface ProductRepository
-        extends JpaRepository<Product, UUID> {
+public interface ProductTypeRepository
+        extends JpaRepository<ProductType, UUID> {
 
     boolean existsByNameAndCatalog(String name, Catalog catalog);
 
     boolean existsBySlugAndCatalog(String slug, Catalog catalog);
 
-    Page<Product> findAllByCatalog(Catalog catalog, Pageable pageable);
+    Page<ProductType> findAllByCatalog(Catalog catalog, Pageable pageable);
 
-    Optional<Product> findByIdAndCatalog(UUID id, Catalog catalog);
+    Optional<ProductType> findByIdAndCatalog(UUID id, Catalog catalog);
 
     boolean existsByNameAndIdNotAndCatalog(String name, UUID id, Catalog catalog);
 

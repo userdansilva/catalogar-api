@@ -8,8 +8,8 @@ import com.catalogar.common.exception.ResourceNotFoundException;
 import com.catalogar.common.message.MessageService;
 import com.catalogar.image.Image;
 import com.catalogar.image.ImageRequest;
-import com.catalogar.product.Product;
-import com.catalogar.product.ProductService;
+import com.catalogar.productType.ProductType;
+import com.catalogar.productType.ProductTypeService;
 import com.catalogar.storage.StorageService;
 import com.catalogar.user.User;
 import com.catalogar.user.UserService;
@@ -25,16 +25,16 @@ import java.util.*;
 @Service
 public class CatalogItemService {
     private final UserService userService;
-    private final ProductService productService;
+    private final ProductTypeService productTypeService;
     private final MessageService messageService;
     private final CategoryService categoryService;
     private final CatalogItemMapper catalogItemMapper;
     private final CatalogItemRepository catalogItemRepository;
     private final StorageService storageService;
 
-    public CatalogItemService(UserService userService, ProductService productService, MessageService messageService, CategoryService categoryService, CatalogItemMapper catalogItemMapper, CatalogItemRepository catalogItemRepository, StorageService storageService) {
+    public CatalogItemService(UserService userService, ProductTypeService productTypeService, MessageService messageService, CategoryService categoryService, CatalogItemMapper catalogItemMapper, CatalogItemRepository catalogItemRepository, StorageService storageService) {
         this.userService = userService;
-        this.productService = productService;
+        this.productTypeService = productTypeService;
         this.messageService = messageService;
         this.categoryService = categoryService;
         this.catalogItemMapper = catalogItemMapper;
@@ -74,19 +74,19 @@ public class CatalogItemService {
         validateImages(request.images());
 
         Catalog catalog = getUserCurrentCatalog(user);
-        UUID productId = UUID.fromString(request.productId());
+        UUID productTypeId = UUID.fromString(request.productTypeId());
         List<UUID> categoryIds = request.categoryIds() != null
                 ? toUUIDList(request.categoryIds())
                 : new ArrayList<>();
 
         CatalogItem catalogItem = catalogItemMapper.toCatalogItem(request);
 
-        Product product = getProductById(productId, catalog);
+        ProductType productType = getProductTypeById(productTypeId, catalog);
         List<Category> categories = getCategoriesByIds(categoryIds, catalog);
         Long reference = generateUniqueReference(catalog);
         LocalDateTime disabledAt = request.isDisabled() ? LocalDateTime.now() : null;
 
-        catalogItem.setProduct(product);
+        catalogItem.setProductType(productType);
         catalogItem.setCategories(categories);
         catalogItem.setReference(reference);
         catalogItem.setDisabledAt(disabledAt);
@@ -163,10 +163,10 @@ public class CatalogItemService {
         return categories;
     }
 
-    private Product getProductById(UUID id, Catalog catalog) {
-        return productService.findByIdAndCatalog(id, catalog)
+    private ProductType getProductTypeById(UUID id, Catalog catalog) {
+        return productTypeService.findByIdAndCatalog(id, catalog)
                 .orElseThrow(() -> new BadRequestException(
-                        messageService.getMessage("error.catalog_item.product_not_found")
+                        messageService.getMessage("error.catalog_item.product_type_not_found")
                 ));
     }
 
@@ -211,20 +211,20 @@ public class CatalogItemService {
 
     public CatalogItem update(UUID id, CatalogItemRequest request, User user) {
         Catalog catalog = getUserCurrentCatalog(user);
-        UUID productId = UUID.fromString(request.productId());
+        UUID productTypeId = UUID.fromString(request.productTypeId());
         List<UUID> categoryIds = request.categoryIds() != null
                 ? toUUIDList(request.categoryIds())
                 : new ArrayList<>();
 
         CatalogItem catalogItem = getById(id, user);
 
-        Product product = getProductById(productId, catalog);
+        ProductType productType = getProductTypeById(productTypeId, catalog);
         List<Category> categories = getCategoriesByIds(categoryIds, catalog);
         LocalDateTime disabledAt = request.isDisabled() ? LocalDateTime.now() : null;
 
         catalogItem.setTitle(request.title());
         catalogItem.setPrice(request.price());
-        catalogItem.setProduct(product);
+        catalogItem.setProductType(productType);
         catalogItem.setCategories(categories);
         catalogItem.setDisabledAt(disabledAt);
 

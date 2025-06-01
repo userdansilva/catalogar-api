@@ -1,4 +1,4 @@
-package com.catalogar.product;
+package com.catalogar.productType;
 
 import com.catalogar.common.dto.ApiResponse;
 import com.catalogar.user.User;
@@ -17,22 +17,22 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/products")
-public class ProductController {
+@RequestMapping("/api/v1/product-types")
+public class ProductTypeController {
     private final UserService userService;
-    private final ProductService productService;
-    private final ProductMapper productMapper;
+    private final ProductTypeService productTypeService;
+    private final ProductTypeMapper productTypeMapper;
     private final Validator validator;
 
-    public ProductController(UserService userService, ProductService productService, ProductMapper productMapper, Validator validator) {
+    public ProductTypeController(UserService userService, ProductTypeService productTypeService, ProductTypeMapper productTypeMapper, Validator validator) {
         this.userService = userService;
-        this.productService = productService;
-        this.productMapper = productMapper;
+        this.productTypeService = productTypeService;
+        this.productTypeMapper = productTypeMapper;
         this.validator = validator;
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<ProductDto>>> getAll(
+    public ResponseEntity<ApiResponse<List<ProductTypeDto>>> getAll(
             @AuthenticationPrincipal Jwt jwt,
             @RequestParam(
                     name = "sort",
@@ -64,7 +64,7 @@ public class ProductController {
     ) {
         User user = userService.getByJwtOrCreate(jwt);
 
-        ProductFilter filter = new ProductFilter(sort, field, page, perPage);
+        ProductTypeFilter filter = new ProductTypeFilter(sort, field, page, perPage);
 
         var violations = validator.validate(filter);
 
@@ -72,50 +72,50 @@ public class ProductController {
             throw new ConstraintViolationException(violations);
         }
 
-        Page<Product> products = productService.getAll(filter, user);
+        Page<ProductType> productTypes = productTypeService.getAll(filter, user);
 
         return ResponseEntity.ok()
-                .body(productMapper.toApiResponse(products));
+                .body(productTypeMapper.toApiResponse(productTypes));
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ApiResponse<ProductDto>> getById(
+    public ResponseEntity<ApiResponse<ProductTypeDto>> getById(
         @AuthenticationPrincipal Jwt jwt,
         @PathVariable("id") UUID id
     ) {
         User user = userService.getByJwtOrCreate(jwt);
 
-        Product product = productService.getById(id, user);
+        ProductType productType = productTypeService.getById(id, user);
 
         return ResponseEntity.ok()
-                .body(productMapper.toApiResponse(product));
+                .body(productTypeMapper.toApiResponse(productType));
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<ProductDto>> create(
+    public ResponseEntity<ApiResponse<ProductTypeDto>> create(
             @AuthenticationPrincipal Jwt jwt,
-            @Valid @RequestBody ProductRequest request
+            @Valid @RequestBody ProductTypeRequest request
     ) {
        User user = userService.getByJwtOrCreate(jwt);
 
-       Product product = productService.create(request, user);
-       URI location = URI.create("/api/v1/products/" + product.getId());
+       ProductType productType = productTypeService.create(request, user);
+       URI location = URI.create("/api/v1/product-types/" + productType.getId());
 
        return ResponseEntity.created(location)
-               .body(productMapper.toApiResponse(product));
+               .body(productTypeMapper.toApiResponse(productType));
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse<ProductDto>> update(
+    public ResponseEntity<ApiResponse<ProductTypeDto>> update(
             @AuthenticationPrincipal Jwt jwt,
-            @Valid @RequestBody ProductRequest request,
+            @Valid @RequestBody ProductTypeRequest request,
             @PathVariable("id") UUID id
     ) {
         User user = userService.getByJwtOrCreate(jwt);
-        Product product = productService.update(id, request, user);
+        ProductType productType = productTypeService.update(id, request, user);
 
         return ResponseEntity.ok()
-                .body(productMapper.toApiResponse(product));
+                .body(productTypeMapper.toApiResponse(productType));
     }
 
     @DeleteMapping("{id}")
@@ -125,7 +125,7 @@ public class ProductController {
     ) {
         User user = userService.getByJwtOrCreate(jwt);
 
-        productService.delete(id, user);
+        productTypeService.delete(id, user);
 
         return ResponseEntity.noContent()
                 .build();
