@@ -3,7 +3,7 @@ package com.catalogar.catalog;
 import com.catalogar.catalogItem.CatalogItem;
 import com.catalogar.category.Category;
 import com.catalogar.company.Company;
-import com.catalogar.product.Product;
+import com.catalogar.productType.ProductType;
 import com.catalogar.theme.Theme;
 import com.catalogar.user.User;
 import jakarta.persistence.*;
@@ -108,7 +108,7 @@ public class Catalog {
             mappedBy = "catalog",
             orphanRemoval = true
     )
-    private List<Product> products = new ArrayList<>();
+    private List<ProductType> productTypes = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "catalog",
@@ -202,12 +202,12 @@ public class Catalog {
         return user;
     }
 
-    public List<Product> getProducts() {
-        return products;
+    public List<ProductType> getProductTypes() {
+        return productTypes;
     }
 
-    public void setProducts(List<Product> products) {
-        this.products = products;
+    public void setProductTypes(List<ProductType> productTypes) {
+        this.productTypes = productTypes;
     }
 
     public List<Category> getCategories() {
@@ -253,12 +253,12 @@ public class Catalog {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Catalog catalog = (Catalog) o;
-        return Objects.equals(id, catalog.id) && Objects.equals(name, catalog.name) && Objects.equals(slug, catalog.slug) && Objects.equals(publishedAt, catalog.publishedAt) && Objects.equals(createdAt, catalog.createdAt) && Objects.equals(updatedAt, catalog.updatedAt) && Objects.equals(company, catalog.company) && Objects.equals(theme, catalog.theme) && Objects.equals(products, catalog.products) && Objects.equals(categories, catalog.categories) && Objects.equals(catalogItems, catalog.catalogItems);
+        return Objects.equals(id, catalog.id) && Objects.equals(name, catalog.name) && Objects.equals(slug, catalog.slug) && Objects.equals(publishedAt, catalog.publishedAt) && Objects.equals(createdAt, catalog.createdAt) && Objects.equals(updatedAt, catalog.updatedAt) && Objects.equals(company, catalog.company) && Objects.equals(theme, catalog.theme) && Objects.equals(productTypes, catalog.productTypes) && Objects.equals(categories, catalog.categories) && Objects.equals(catalogItems, catalog.catalogItems);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, slug, publishedAt, createdAt, updatedAt, company, theme, products, categories, catalogItems);
+        return Objects.hash(id, name, slug, publishedAt, createdAt, updatedAt, company, theme, productTypes, categories, catalogItems);
     }
 
     @Override
@@ -272,7 +272,7 @@ public class Catalog {
                 ", updatedAt=" + updatedAt +
                 ", company=" + company +
                 ", theme=" + theme +
-                ", products=" + products +
+                ", productTypes=" + productTypes +
                 ", categories=" + categories +
                 ", catalogItems=" + catalogItems +
                 '}';

@@ -2,7 +2,7 @@ package com.catalogar.catalogItem;
 
 import com.catalogar.category.CategoryDto;
 import com.catalogar.image.ImageDto;
-import com.catalogar.product.ProductDto;
+import com.catalogar.productType.ProductTypeDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,7 +15,7 @@ public record CatalogItemDto(
         String caption,
         BigDecimal price,
         Long reference,
-        ProductDto product,
+        ProductTypeDto productType,
         List<CategoryDto> categories,
         List<ImageDto> images,
         boolean isDisabled,

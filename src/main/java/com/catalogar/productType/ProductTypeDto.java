@@ -1,9 +1,9 @@
-package com.catalogar.product;
+package com.catalogar.productType;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public record ProductDto(
+public record ProductTypeDto(
         UUID id,
         String name,
         String slug,

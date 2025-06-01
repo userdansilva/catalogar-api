@@ -1,10 +1,10 @@
-package com.catalogar.product;
+package com.catalogar.productType;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 
-public record ProductFilter(
+public record ProductTypeFilter(
         @Pattern(
                 regexp = "asc|desc",
                 message = "Ordenação inválida. Valores permitidos: crescente, decrescente"

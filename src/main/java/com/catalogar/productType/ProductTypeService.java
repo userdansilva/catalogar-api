@@ -1,4 +1,4 @@
-package com.catalogar.product;
+package com.catalogar.productType;
 
 import com.catalogar.catalog.Catalog;
 import com.catalogar.common.exception.ResourceNotFoundException;
@@ -17,55 +17,55 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class ProductService {
-    private final ProductRepository productRepository;
+public class ProductTypeService {
+    private final ProductTypeRepository productTypeRepository;
     private final MessageService messageService;
-    private final ProductMapper productMapper;
+    private final ProductTypeMapper productTypeMapper;
     private final UserService userService;
 
-    public ProductService(ProductRepository productRepository, MessageService messageService, ProductMapper productMapper, UserService userService) {
-        this.productRepository = productRepository;
+    public ProductTypeService(ProductTypeRepository productTypeRepository, MessageService messageService, ProductTypeMapper productTypeMapper, UserService userService) {
+        this.productTypeRepository = productTypeRepository;
         this.messageService = messageService;
-        this.productMapper = productMapper;
+        this.productTypeMapper = productTypeMapper;
         this.userService = userService;
     }
 
-    public Page<Product> getAll(ProductFilter filter, User user) {
+    public Page<ProductType> getAll(ProductTypeFilter filter, User user) {
         Catalog catalog = getUserCurrentCatalog(user);
         int pageNumber = Integer.parseInt(filter.page()) - 1;
         int pageSize = Integer.parseInt(filter.perPage());
 
-        Sort sort = productMapper.toSort(filter);
+        Sort sort = productTypeMapper.toSort(filter);
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
 
-        return productRepository.findAllByCatalog(catalog, pageable);
+        return productTypeRepository.findAllByCatalog(catalog, pageable);
     }
 
     private Catalog getUserCurrentCatalog(User user) {
         return userService.getUserCurrentCatalog(user);
     }
 
-    public Product getById(UUID id, User user) {
+    public ProductType getById(UUID id, User user) {
         Catalog catalog = getUserCurrentCatalog(user);
 
         return findByIdAndCatalog(id, catalog)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        messageService.getMessage("error.product.not_found")
+                        messageService.getMessage("error.product_type.not_found")
                 ));
     }
 
-    public Optional<Product> findByIdAndCatalog(UUID id, Catalog catalog) {
-        return productRepository.findByIdAndCatalog(id, catalog);
+    public Optional<ProductType> findByIdAndCatalog(UUID id, Catalog catalog) {
+        return productTypeRepository.findByIdAndCatalog(id, catalog);
     }
 
-    public Product create(ProductRequest request, User user) {
+    public ProductType create(ProductTypeRequest request, User user) {
         Catalog catalog = getUserCurrentCatalog(user);
         boolean existsByName = existsByNameAndCatalog(request.name(), catalog);
 
         if (existsByName) {
             throw new UniqueFieldConflictException(
-                    messageService.getMessage("error.product.name_unavailable", request.name())
+                    messageService.getMessage("error.product_type.name_unavailable", request.name())
             );
         }
 
@@ -73,30 +73,30 @@ public class ProductService {
 
         if (existsBySlug) {
             throw new UniqueFieldConflictException(
-                    messageService.getMessage("error.product.slug_unavailable", request.slug())
+                    messageService.getMessage("error.product_type.slug_unavailable", request.slug())
             );
         }
 
-        Product product = productMapper.toProduct(request);
-        product.setDisabledAt(request.isDisabled()
+        ProductType productType = productTypeMapper.toProductType(request);
+        productType.setDisabledAt(request.isDisabled()
                 ? LocalDateTime.now()
                 : null);
 
-        product.setCatalog(catalog);
+        productType.setCatalog(catalog);
 
-        return productRepository.save(product);
+        return productTypeRepository.save(productType);
     }
 
     private boolean existsByNameAndCatalog(String name, Catalog catalog) {
-        return productRepository.existsByNameAndCatalog(name, catalog);
+        return productTypeRepository.existsByNameAndCatalog(name, catalog);
     }
 
     private boolean existsBySlugAndCatalog(String slug, Catalog catalog) {
-        return productRepository.existsBySlugAndCatalog(slug, catalog);
+        return productTypeRepository.existsBySlugAndCatalog(slug, catalog);
     }
 
-    public Product update(UUID id, ProductRequest request, User user) {
-        Product product = getById(id, user);
+    public ProductType update(UUID id, ProductTypeRequest request, User user) {
+        ProductType productType = getById(id, user);
         Catalog catalog = getUserCurrentCatalog(user);
 
         boolean existsByNameAndIdNot = existsByNameAndIdNotAndCatalog(
@@ -105,7 +105,7 @@ public class ProductService {
 
         if (existsByNameAndIdNot) {
             throw new UniqueFieldConflictException(
-                    messageService.getMessage("error.product.name_unavailable", request.name())
+                    messageService.getMessage("error.product_type.name_unavailable", request.name())
             );
         }
 
@@ -115,25 +115,25 @@ public class ProductService {
 
         if (existsBySlugAndIdNot) {
             throw new UniqueFieldConflictException(
-                    messageService.getMessage("error.product.slug_unavailable", request.slug())
+                    messageService.getMessage("error.product_type.slug_unavailable", request.slug())
             );
         }
 
-        product.setName(request.name());
-        product.setSlug(request.slug());
-        product.setDisabledAt(request.isDisabled()
+        productType.setName(request.name());
+        productType.setSlug(request.slug());
+        productType.setDisabledAt(request.isDisabled()
                 ? LocalDateTime.now()
                 : null);
 
-        return productRepository.save(product);
+        return productTypeRepository.save(productType);
     }
 
     private boolean existsByNameAndIdNotAndCatalog(String name, UUID id, Catalog catalog) {
-        return productRepository.existsByNameAndIdNotAndCatalog(name, id, catalog);
+        return productTypeRepository.existsByNameAndIdNotAndCatalog(name, id, catalog);
     }
 
     private boolean existsBySlugAndIdNotAndCatalog(String slug, UUID id, Catalog catalog) {
-        return productRepository.existsBySlugAndIdNotAndCatalog(slug, id, catalog);
+        return productTypeRepository.existsBySlugAndIdNotAndCatalog(slug, id, catalog);
     }
 
     public void delete(UUID id, User user) {
@@ -142,7 +142,7 @@ public class ProductService {
 
         if (!existsById) {
             throw new ResourceNotFoundException(
-                    messageService.getMessage("error.product.not_found")
+                    messageService.getMessage("error.product_type.not_found")
             );
         }
 
@@ -150,10 +150,10 @@ public class ProductService {
     }
 
     public boolean existsByIdAndCatalog(UUID id, Catalog catalog) {
-        return productRepository.existsByIdAndCatalog(id, catalog);
+        return productTypeRepository.existsByIdAndCatalog(id, catalog);
     }
 
     private void deleteByIdAndCatalog(UUID id, Catalog catalog) {
-        productRepository.deleteByIdAndCatalog(id, catalog);
+        productTypeRepository.deleteByIdAndCatalog(id, catalog);
     }
 }

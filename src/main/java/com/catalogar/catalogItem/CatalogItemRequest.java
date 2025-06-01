@@ -16,7 +16,7 @@ public record CatalogItemRequest(
         BigDecimal price,
 
         @NotEmpty(message = "Tipo de produto é obrigatório")
-        String productId,
+        String productTypeId,
 
         List<String> categoryIds,
 

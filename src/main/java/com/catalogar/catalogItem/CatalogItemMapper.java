@@ -7,8 +7,8 @@ import com.catalogar.common.dto.Metadata;
 import com.catalogar.common.dto.Pagination;
 import com.catalogar.image.ImageDto;
 import com.catalogar.image.ImageMapper;
-import com.catalogar.product.ProductDto;
-import com.catalogar.product.ProductMapper;
+import com.catalogar.productType.ProductTypeDto;
+import com.catalogar.productType.ProductTypeMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -17,12 +17,12 @@ import java.util.List;
 
 @Component
 public class CatalogItemMapper {
-    private final ProductMapper productMapper;
+    private final ProductTypeMapper productTypeMapper;
     private final CategoryMapper categoryMapper;
     private final ImageMapper imageMapper;
 
-    public CatalogItemMapper(ProductMapper productMapper, CategoryMapper categoryMapper, ImageMapper imageMapper) {
-        this.productMapper = productMapper;
+    public CatalogItemMapper(ProductTypeMapper productTypeMapper, CategoryMapper categoryMapper, ImageMapper imageMapper) {
+        this.productTypeMapper = productTypeMapper;
         this.categoryMapper = categoryMapper;
         this.imageMapper = imageMapper;
     }
@@ -69,8 +69,8 @@ public class CatalogItemMapper {
     }
 
     public CatalogItemDto toDto(CatalogItem catalogItem) {
-        ProductDto productDto = productMapper.toDto(catalogItem
-                .getProduct());
+        ProductTypeDto productTypeDto = productTypeMapper.toDto(catalogItem
+                .getProductType());
 
         List<CategoryDto> categoryDtoList = catalogItem.getCategories()
                 .stream()
@@ -89,7 +89,7 @@ public class CatalogItemMapper {
                 catalogItem.getCaption(),
                 catalogItem.getPrice(),
                 catalogItem.getReference(),
-                productDto,
+                productTypeDto,
                 categoryDtoList,
                 imageDtoList,
                 catalogItem.getDisabledAt() != null,
