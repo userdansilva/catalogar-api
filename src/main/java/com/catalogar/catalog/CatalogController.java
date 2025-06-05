@@ -32,7 +32,7 @@ public class CatalogController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<CatalogDto>> create(
-            @Valid @RequestBody CatalogRequest request,
+            @Valid @RequestBody CreateCatalogRequest request,
             @AuthenticationPrincipal Jwt jwt
     ) {
         User user = userService.getByJwtOrCreate(jwt);
@@ -50,7 +50,7 @@ public class CatalogController {
 
     @PutMapping
     public ResponseEntity<ApiResponse<CatalogDto>> update(
-            @Valid @RequestBody CatalogRequest request,
+            @Valid @RequestBody UpdateCatalogRequest request,
             @AuthenticationPrincipal Jwt jwt
     ) {
         User user = userService.getByJwtOrCreate(jwt);

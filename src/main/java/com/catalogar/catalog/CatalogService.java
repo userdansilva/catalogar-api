@@ -1,5 +1,6 @@
 package com.catalogar.catalog;
 
+import com.catalogar.common.exception.BadRequestException;
 import com.catalogar.common.exception.ResourceNotFoundException;
 import com.catalogar.common.exception.UniqueFieldConflictException;
 import com.catalogar.common.message.MessageService;
@@ -27,30 +28,18 @@ public class CatalogService {
         this.messageService = messageService;
     }
 
-    public Catalog create(CatalogRequest request, User user) {
-        boolean existsBySlug = existsBySlug(request.slug());
-
-        if (existsBySlug) {
-            throw new UniqueFieldConflictException(messageService
-                    .getMessage("error.catalog.slug_unavailable",
-                            request.slug()));
-        }
-
+    public Catalog create(CreateCatalogRequest request, User user) {
         return createAndUpdateUserCurrentCatalog(request, user);
     }
 
-    private boolean existsBySlug(String slug) {
-        return catalogRepository.existsBySlug(slug);
-    }
-
-    private Catalog createAndUpdateUserCurrentCatalog(CatalogRequest request, User user) {
+    private Catalog createAndUpdateUserCurrentCatalog(CreateCatalogRequest request, User user) {
         Catalog catalog = createCatalog(request, user);
         updateUserCurrentCatalog(catalog, user);
 
         return catalog;
     }
 
-    private Catalog createCatalog(CatalogRequest request, User user) {
+    private Catalog createCatalog(CreateCatalogRequest request, User user) {
         return catalogRepository.save(catalogMapper
                 .toCatalog(user, request));
     }
@@ -59,17 +48,10 @@ public class CatalogService {
         userService.updateCurrentCatalog(user, catalog);
     }
 
-    public Catalog update(CatalogRequest request, User user) {
+    public Catalog update(UpdateCatalogRequest request, User user) {
         Catalog currentCatalog = getUserCurrentCatalog(user);
 
-        boolean existsBySlugAndIdNot = existsBySlug(request.slug(),
-                currentCatalog.getId());
-
-        if (existsBySlugAndIdNot) {
-            throw new UniqueFieldConflictException(messageService
-                    .getMessage("error.catalog.slug_unavailable",
-                            request.slug()));
-        }
+        validate(currentCatalog, request);
 
         return updateCatalog(currentCatalog, request);
     }
@@ -78,12 +60,31 @@ public class CatalogService {
         return userService.getUserCurrentCatalog(user);
     }
 
+    private void validate(Catalog catalog, UpdateCatalogRequest request) {
+        boolean hasSlug = catalog.getSlug() != null && !catalog.getSlug().isEmpty();
+
+        if (catalog.isPublished() && !hasSlug) {
+            throw new BadRequestException(messageService
+                    .getMessage("error.catalog.is_published_without_slug"));
+        }
+
+        if (hasSlug) {
+            boolean existsBySlugAndIdNot = existsBySlug(request.slug(), catalog.getId());
+
+            if (existsBySlugAndIdNot) {
+                throw new UniqueFieldConflictException(messageService
+                        .getMessage("error.catalog.slug_unavailable",
+                                request.slug()));
+            }
+        }
+    }
+
     private boolean existsBySlug(String slug, UUID id) {
         return catalogRepository
                 .existsBySlugAndIdNot(slug, id);
     }
 
-    private Catalog updateCatalog(Catalog catalog, CatalogRequest request) {
+    private Catalog updateCatalog(Catalog catalog, UpdateCatalogRequest request) {
         catalog.setName(request.name());
         catalog.setSlug(request.slug());
 

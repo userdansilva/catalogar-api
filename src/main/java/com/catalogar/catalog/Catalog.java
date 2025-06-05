@@ -48,7 +48,6 @@ public class Catalog {
 
     @Column(
             name = "slug",
-            nullable = false,
             columnDefinition = "TEXT"
     )
     private String slug;
@@ -244,6 +243,10 @@ public class Catalog {
 
     public Catalog(String name, String slug) {
         this(name, slug, null);
+    }
+
+    public Catalog(User user, String name) {
+        this(user, name, null, null);
     }
 
     public Catalog() {
