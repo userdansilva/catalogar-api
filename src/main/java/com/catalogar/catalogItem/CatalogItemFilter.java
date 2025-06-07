@@ -26,8 +26,8 @@ public record CatalogItemFilter(
                 message = "Quantidade de itens por página deve ser maior ou igual a 1"
         )
         @Max(
-                value = 10,
-                message = "Quantidade máxima de itens por página deve ser menor ou igual a 10"
+                value = 10_000,
+                message = "Quantidade máxima de itens por página deve ser menor ou igual a 10.000"
         )
         String perPage
 ) {
