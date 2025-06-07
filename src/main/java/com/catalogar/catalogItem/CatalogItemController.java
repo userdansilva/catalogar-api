@@ -58,7 +58,7 @@ public class CatalogItemController {
             @RequestParam(
                     name = "perPage",
                     required = false,
-                    defaultValue = "10"
+                    defaultValue = "10_000"
             )
             String perPage
     ) {
