@@ -14,4 +14,6 @@ public interface CatalogRepository
     boolean existsBySlugAndIdNot(String slug, UUID id);
 
     Optional<Catalog> findByIdAndUserId(UUID id, UUID userId);
+
+    Optional<Catalog> findBySlug(String slug);
 }

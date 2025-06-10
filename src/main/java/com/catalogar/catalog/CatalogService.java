@@ -102,6 +102,20 @@ public class CatalogService {
         return catalogRepository.save(catalog);
     }
 
+    public Catalog getBySlug(String slug) {
+        Catalog catalog = catalogRepository
+                .findBySlug(slug)
+                .orElseThrow(() -> new ResourceNotFoundException(messageService
+                        .getMessage("error.catalog.not_found")));
+
+        if (!catalog.isPublished()) {
+            throw new ResourceNotFoundException(messageService
+                    .getMessage("error.catalog.not_found"));
+        }
+
+        return catalog;
+    }
+
     public Catalog getByIdAndUser(UUID id, User user) {
         return getByIdAndUserId(id, user.getId());
     }
