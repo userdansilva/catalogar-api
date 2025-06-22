@@ -59,7 +59,8 @@ public class StorageService {
                 azureCustomUrl
         );
 
-        String uploadUrl = customAccessUrl + "?" + blockBlobClient.generateSas(sasSignatureValues);
+        // Upload must be done at default blob url
+        String uploadUrl = defaultAccessUrl + "?" + sasToken;
 
         return new Storage(fileName, uploadUrl, customAccessUrl);
     }
