@@ -50,10 +50,18 @@ public class StorageService {
         var sasSignatureValues = new BlobServiceSasSignatureValues(expiryTime, sasPermission)
                 .setProtocol(SasProtocol.HTTPS_ONLY);
 
-        String accessUrl = blockBlobClient.getBlobUrl();
-        String uploadUrl = accessUrl + "?" + blockBlobClient.generateSas(sasSignatureValues);
+        String sasToken = blockBlobClient.generateSas(sasSignatureValues);
+        String storageAccountUrl = blobServiceClient.getAccountUrl();
 
-        return new Storage(fileName, uploadUrl, accessUrl);
+        String defaultAccessUrl = blockBlobClient.getBlobUrl();
+        String customAccessUrl = defaultAccessUrl.replace(
+                storageAccountUrl,
+                azureCustomUrl
+        );
+
+        String uploadUrl = customAccessUrl + "?" + blockBlobClient.generateSas(sasSignatureValues);
+
+        return new Storage(fileName, uploadUrl, customAccessUrl);
     }
     
     public String getFileExtension(FileType fileType) {
