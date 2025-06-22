@@ -15,13 +15,16 @@ import java.util.UUID;
 
 @Service
 public class StorageService {
+    private final String azureCustomUrl;
     private final BlobServiceClient blobServiceClient;
     private final String containerName;
 
     public StorageService(
+            @Value("${azure.storage.custom-url}") String azureCustomUrl,
             @Value("${azure.storage.connection-string}") String connectionString,
             @Value("${azure.storage.container-name}") String containerName
     ) {
+        this.azureCustomUrl = azureCustomUrl;
         this.blobServiceClient = new BlobServiceClientBuilder()
                 .connectionString(connectionString)
                 .buildClient();
@@ -64,6 +67,6 @@ public class StorageService {
     }
 
     public String getBlobUrl() {
-        return blobServiceClient.getAccountUrl() + "/" + containerName + "/";
+        return azureCustomUrl + "/" + containerName + "/";
     }
 }
