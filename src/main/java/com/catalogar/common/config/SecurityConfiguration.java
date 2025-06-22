@@ -20,7 +20,11 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfiguration {
     @Value("${spring.web.cors.allowed-origins}")
-    private List<String> allowedOrigins;
+    private final List<String> allowedOrigins;
+
+    public SecurityConfiguration(List<String> allowedOrigins) {
+        this.allowedOrigins = allowedOrigins;
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
