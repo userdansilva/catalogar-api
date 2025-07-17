@@ -38,12 +38,11 @@ public class UserService {
     }
 
     public User getByJwtOrCreate(Jwt jwt) {
-        UUID id = UUID.fromString(Utilities.filterClaims(jwt).get("sub"));
         String name = Utilities.filterClaims(jwt).get("name");
         String email = Utilities.filterClaims(jwt).get("email");
 
-        return userRepository.findById(id)
-                .orElseGet(() -> create(new User(id, name, email)));
+        return userRepository.findByEmail(email)
+                .orElseGet(() -> create(new User(name, email)));
     }
 
     private User create(User user) {
