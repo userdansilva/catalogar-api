@@ -23,6 +23,10 @@ public class Utilities {
             if (claims.containsKey(claim)) {
                 filteredClaims.put(claim, claims.get(claim).toString());
             }
+
+            if (claim.equals("name") || claim.equals("email")) {
+                filteredClaims.put(claim, claims.get("https://catalogar.com.br/" + claim).toString());
+            }
         });
 
         return filteredClaims;
