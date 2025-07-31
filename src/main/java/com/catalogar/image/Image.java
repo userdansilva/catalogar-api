@@ -51,10 +51,7 @@ public class Image {
     )
     private Short position;
 
-    @ManyToOne(
-            cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER
-    )
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(
             name = "catalog_item_id",
             referencedColumnName = "id",
