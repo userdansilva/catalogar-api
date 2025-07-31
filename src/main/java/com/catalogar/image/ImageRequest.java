@@ -9,6 +9,9 @@ public record ImageRequest(
         @UuidImage(message = "Nome e/ou tipo de imagem inválida")
         String fileName,
 
+        @NotEmpty(message = "Url da imagem é obrigatório")
+        String fileUrl,
+
         @Min(value = 1, message = "Posição da imagem deve ser maior ou igual a 1")
         int position
 ) {

@@ -110,6 +110,12 @@ public class CatalogItemService {
                 .toList();
 
         validateImagePositionSequenceAndOrder(imagePositions);
+
+        List<String> imageUrls = images.stream()
+                .map(ImageRequest::fileUrl)
+                .toList();
+
+        validateImageUrls(imageUrls);
     }
 
     private void validateUnique(List<String> imageNames) {
@@ -148,6 +154,23 @@ public class CatalogItemService {
         }
     }
 
+    private void validateImageUrls(List<String> imageUrls) {
+        String blobUrl = storageService.getBlobUrl();
+
+        // Add mais URLs válida caso necessário
+        List<String> validUrls = List.of(blobUrl);
+
+        for (String imageUrl : imageUrls) {
+            boolean isValid = validUrls.stream().anyMatch(imageUrl::startsWith);
+
+            if (!isValid) {
+                throw new BadRequestException(
+                        messageService.getMessage("error.image.invalid_url")
+                );
+            }
+        }
+    }
+
     private List<UUID> toUUIDList(List<String> values) {
         return values.stream().map(UUID::fromString).toList();
     }
@@ -178,12 +201,10 @@ public class CatalogItemService {
     }
 
     private List<Image> toImages(List<ImageRequest> imageRequests, CatalogItem catalogItem) {
-        String blobUrl = storageService.getBlobUrl();
-
         return imageRequests.stream()
                 .map((imageRequest -> {
                     String name = imageRequest.fileName();
-                    String url = blobUrl + name;
+                    String url = imageRequest.fileUrl();
                     Short position = (short) imageRequest.position();
 
                     return new Image(name, url, position, catalogItem);
@@ -210,6 +231,8 @@ public class CatalogItemService {
     }
 
     public CatalogItem update(UUID id, CatalogItemRequest request, User user) {
+        validateImages(request.images());
+
         Catalog catalog = getUserCurrentCatalog(user);
         UUID productTypeId = UUID.fromString(request.productTypeId());
         List<UUID> categoryIds = request.categoryIds() != null
@@ -227,6 +250,22 @@ public class CatalogItemService {
         catalogItem.setProductType(productType);
         catalogItem.setCategories(categories);
         catalogItem.setDisabledAt(disabledAt);
+
+        List<Image> images = toImages(request.images(), catalogItem);
+
+        List<Image> newImages = images.stream().map(newImage -> {
+            Optional<Image> existingImage = catalogItem.getImages().stream()
+                    .filter(image -> newImage.getUrl().equals(image.getUrl()))
+                    .findFirst();
+
+            return existingImage.map(existing -> {
+                existing.setPosition(newImage.getPosition());
+                return existing;
+            }).orElse(newImage);
+        }).toList();
+
+        catalogItem.getImages().clear();
+        catalogItem.getImages().addAll(newImages);
 
         return catalogItemRepository.save(catalogItem);
     }
