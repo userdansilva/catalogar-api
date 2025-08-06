@@ -157,7 +157,7 @@ public class CatalogItemService {
     private void validateImageUrls(List<String> imageUrls) {
         String blobUrl = storageService.getBlobUrl();
 
-        // Add mais URLs válida caso necessário
+        // Add mais URLs válida caso necessário (duplicado)
         List<String> validUrls = List.of(blobUrl);
 
         for (String imageUrl : imageUrls) {
@@ -223,8 +223,7 @@ public class CatalogItemService {
                             width,
                             height,
                             altText,
-                            position,
-                            catalogItem
+                            position
                     );
                 }))
                 .toList();

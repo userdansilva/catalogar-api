@@ -1,11 +1,12 @@
 package com.catalogar.theme;
 
 import com.catalogar.catalog.Catalog;
+import com.catalogar.common.exception.BadRequestException;
 import com.catalogar.common.exception.ResourceNotFoundException;
 import com.catalogar.common.exception.UniqueFieldConflictException;
 import com.catalogar.common.message.MessageService;
-import com.catalogar.logo.Logo;
-import com.catalogar.logo.LogoRequest;
+import com.catalogar.image.Image;
+import com.catalogar.image.ImageRequest;
 import com.catalogar.storage.StorageService;
 import com.catalogar.user.User;
 import com.catalogar.user.UserService;
@@ -49,21 +50,29 @@ public class ThemeService {
         theme.setCatalog(catalog);
 
         theme.setLogo(request.logo() != null
-                ? toLogo(request.logo(), theme)
+                ? toLogo(request.logo(), theme, catalog)
                 : null);
 
         return themeRepository.save(theme);
     }
 
-    private Logo toLogo(LogoRequest request, Theme theme) {
+    private Image toLogo(ImageRequest request, Theme theme, Catalog catalog) {
         String blobUrl = storageService.getBlobUrl();
+        String url = request.url();
 
-        String name = request.originalFileName();
-        String url = blobUrl + request.fileName();
+        if (!url.startsWith(blobUrl)) {
+            throw new BadRequestException(
+                    messageService.getMessage("error.image.invalid_url")
+            );
+        }
+
+        String name = request.fileName();
+        Long size = (long) request.sizeInBytes();
         Short width = (short) request.width();
         Short height = (short) request.height();
+        String altText = request.altText();
 
-        return new Logo(name, url, width, height, theme);
+        return new Image(name, url, size, catalog, width, height, altText);
     }
 
     public Theme update(ThemeRequest request, User user) {
@@ -78,15 +87,15 @@ public class ThemeService {
 
         Theme theme = currentCatalog.getTheme();
 
-        return update(request, theme);
+        return update(request, theme, currentCatalog);
     }
 
-    private Theme update(ThemeRequest request, Theme theme) {
+    private Theme update(ThemeRequest request, Theme theme, Catalog catalog) {
         theme.setPrimaryColor(request.primaryColor());
         theme.setSecondaryColor(request.secondaryColor());
 
         theme.setLogo(request.logo() != null
-                ? toLogo(request.logo(), theme)
+                ? toLogo(request.logo(), theme, catalog)
                 : null);
 
         return themeRepository.save(theme);

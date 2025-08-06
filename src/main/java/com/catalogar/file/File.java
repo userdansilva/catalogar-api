@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity(name = "File")
+@Inheritance(strategy = InheritanceType.JOINED)
 @EntityListeners(AuditingEntityListener.class)
 @Table(
         name = "file",

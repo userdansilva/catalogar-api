@@ -1,7 +1,7 @@
 package com.catalogar.theme;
 
 import com.catalogar.catalog.Catalog;
-import com.catalogar.logo.Logo;
+import com.catalogar.image.Image;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -77,12 +77,12 @@ public class Theme {
     private Catalog catalog;
 
     @OneToOne(
-            mappedBy = "theme",
             fetch = FetchType.EAGER,
             orphanRemoval = true,
             cascade = CascadeType.ALL
     )
-    private Logo logo;
+    @JoinColumn(name = "image_id")
+    private Image logo;
 
     public Theme() {
     }
@@ -140,11 +140,11 @@ public class Theme {
         this.catalog = catalog;
     }
 
-    public Logo getLogo() {
+    public Image getLogo() {
         return logo;
     }
 
-    public void setLogo(Logo logo) {
+    public void setLogo(Image logo) {
         this.logo = logo;
     }
 

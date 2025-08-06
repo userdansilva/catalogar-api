@@ -1,7 +1,7 @@
 package com.catalogar.theme;
 
 import com.catalogar.common.validation.Hexadecimal;
-import com.catalogar.logo.LogoRequest;
+import com.catalogar.image.ImageRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 
@@ -15,6 +15,6 @@ public record ThemeRequest(
         String secondaryColor,
 
         @Valid
-        LogoRequest logo
+        ImageRequest logo
 ) {
 }

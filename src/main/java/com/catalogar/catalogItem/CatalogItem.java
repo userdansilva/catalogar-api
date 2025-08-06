@@ -128,10 +128,10 @@ public class CatalogItem {
     private List<Category> categories = new ArrayList<>();
 
     @OneToMany(
-            mappedBy = "catalogItem",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+    @JoinColumn(name = "image_id")
     private List<CatalogItemImage> images = new ArrayList<>();
 
     public UUID getId() {
