@@ -6,11 +6,14 @@ import org.springframework.stereotype.Component;
 public class ImageMapper {
     public ImageDto toDto(Image image) {
         return new ImageDto(
-            image.getId(),
-            image.getFileName(),
-            image.getUrl(),
-            image.getPosition(),
-            image.getCreatedAt()
+                image.getId(),
+                image.getName(),
+                image.getUrl(),
+                image.getSize(),
+                image.getWidth(),
+                image.getHeight(),
+                image.getAltText(),
+                image.getCreatedAt()
         );
     }
 }

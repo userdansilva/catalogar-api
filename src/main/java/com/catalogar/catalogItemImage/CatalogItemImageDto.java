@@ -1,14 +1,17 @@
-package com.catalogar.logo;
+package com.catalogar.catalogItemImage;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public record LogoDto(
+public record CatalogItemImageDto(
         UUID id,
-        String name,
+        String fileName,
         String url,
+        Long sizeInBytes,
         Short width,
         Short height,
+        String altText,
+        Short position,
         LocalDateTime createdAt
 ) {
 }

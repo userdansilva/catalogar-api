@@ -1,8 +1,8 @@
 package com.catalogar.catalogItem;
 
 import com.catalogar.catalog.Catalog;
+import com.catalogar.catalogItemImage.CatalogItemImage;
 import com.catalogar.category.Category;
-import com.catalogar.image.Image;
 import com.catalogar.productType.ProductType;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -53,7 +53,6 @@ public class CatalogItem {
     @Column(
             name = "reference",
             nullable = false,
-            unique = true,
             columnDefinition = "INTEGER"
     )
     private Long reference;
@@ -129,11 +128,11 @@ public class CatalogItem {
     private List<Category> categories = new ArrayList<>();
 
     @OneToMany(
-            mappedBy = "catalogItem",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private List<Image> images = new ArrayList<>();
+    @JoinColumn(name = "image_id")
+    private List<CatalogItemImage> images = new ArrayList<>();
 
     public UUID getId() {
         return id;
@@ -223,11 +222,11 @@ public class CatalogItem {
         this.catalog = catalog;
     }
 
-    public List<Image> getImages() {
+    public List<CatalogItemImage> getImages() {
         return images;
     }
 
-    public void setImages(List<Image> images) {
+    public void setImages(List<CatalogItemImage> images) {
         this.images = images;
     }
 

@@ -1,10 +1,10 @@
 package com.catalogar.theme;
 
-import com.catalogar.logo.LogoDto;
+import com.catalogar.image.ImageDto;
 
 public record ThemeDto(
         String primaryColor,
         String secondaryColor,
-        LogoDto logo
+        ImageDto logo
 ) {
 }

@@ -1,6 +1,6 @@
 package com.catalogar.catalogItem;
 
-import com.catalogar.image.ImageRequest;
+import com.catalogar.catalogItemImage.CatalogItemImageRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 
@@ -22,7 +22,7 @@ public record CatalogItemRequest(
 
         @NotEmpty(message = "Imagem do item de catálogo é obrigatória")
         @Valid
-        List<ImageRequest> images,
+        List<CatalogItemImageRequest> images,
 
         boolean isDisabled
 ) {

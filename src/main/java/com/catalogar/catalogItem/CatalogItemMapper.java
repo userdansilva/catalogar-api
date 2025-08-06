@@ -1,12 +1,12 @@
 package com.catalogar.catalogItem;
 
+import com.catalogar.catalogItemImage.CatalogItemImageDto;
+import com.catalogar.catalogItemImage.CatalogItemImageMapper;
 import com.catalogar.category.CategoryDto;
 import com.catalogar.category.CategoryMapper;
 import com.catalogar.common.dto.ApiResponse;
 import com.catalogar.common.dto.Metadata;
 import com.catalogar.common.dto.Pagination;
-import com.catalogar.image.ImageDto;
-import com.catalogar.image.ImageMapper;
 import com.catalogar.productType.ProductTypeDto;
 import com.catalogar.productType.ProductTypeMapper;
 import org.springframework.data.domain.Page;
@@ -19,12 +19,16 @@ import java.util.List;
 public class CatalogItemMapper {
     private final ProductTypeMapper productTypeMapper;
     private final CategoryMapper categoryMapper;
-    private final ImageMapper imageMapper;
+    private final CatalogItemImageMapper catalogItemImageMapper;
 
-    public CatalogItemMapper(ProductTypeMapper productTypeMapper, CategoryMapper categoryMapper, ImageMapper imageMapper) {
+    public CatalogItemMapper(
+            ProductTypeMapper productTypeMapper,
+            CategoryMapper categoryMapper,
+            CatalogItemImageMapper catalogItemImageMapper
+    ) {
         this.productTypeMapper = productTypeMapper;
         this.categoryMapper = categoryMapper;
-        this.imageMapper = imageMapper;
+        this.catalogItemImageMapper = catalogItemImageMapper;
     }
 
     public CatalogItem toCatalogItem(CatalogItemRequest request) {
@@ -77,9 +81,9 @@ public class CatalogItemMapper {
                 .map(categoryMapper::toDto)
                 .toList();
 
-        List<ImageDto> imageDtoList = catalogItem.getImages()
+        List<CatalogItemImageDto> imageDtoList = catalogItem.getImages()
                 .stream()
-                .map(imageMapper::toDto)
+                .map(catalogItemImageMapper::toDto)
                 .toList();
 
 

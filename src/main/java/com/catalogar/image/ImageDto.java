@@ -7,7 +7,10 @@ public record ImageDto(
         UUID id,
         String fileName,
         String url,
-        Short position,
+        Long sizeInBytes,
+        Short width,
+        Short height,
+        String altText,
         LocalDateTime createdAt
 ) {
 }

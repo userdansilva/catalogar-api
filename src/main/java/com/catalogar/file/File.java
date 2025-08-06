@@ -1,6 +1,6 @@
-package com.catalogar.logo;
+package com.catalogar.file;
 
-import com.catalogar.theme.Theme;
+import com.catalogar.catalog.Catalog;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -9,22 +9,19 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
-@Entity(name = "Logo")
+@Entity(name = "File")
+@Inheritance(strategy = InheritanceType.JOINED)
 @EntityListeners(AuditingEntityListener.class)
 @Table(
-        name = "logo",
+        name = "file",
         uniqueConstraints = {
                 @UniqueConstraint(
-                        name = "url_unique",
+                        name = "file_url_unique",
                         columnNames = "url"
-                ),
-                @UniqueConstraint(
-                        name = "theme_id_unique",
-                        columnNames = "theme_id"
                 )
         }
 )
-public class Logo {
+public class File {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(
@@ -49,18 +46,11 @@ public class Logo {
     private String url;
 
     @Column(
-            name = "width",
-            columnDefinition = "SMALLINT",
+            name = "size",
+            columnDefinition = "BIGINT",
             nullable = false
     )
-    private Short width;
-
-    @Column(
-            name = "height",
-            columnDefinition = "SMALLINT",
-            nullable = false
-    )
-    private Short height;
+    private Long size;
 
     @CreatedDate
     @Column(
@@ -71,33 +61,26 @@ public class Logo {
     )
     private LocalDateTime createdAt;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(
-            name = "theme_id",
+            name = "catalog_id",
             referencedColumnName = "id",
             foreignKey = @ForeignKey(
-                    name = "logo_theme_id_fk"
+                    name = "file_catalog_id_fk"
             ),
             updatable = false,
             nullable = false
     )
-    private Theme theme;
+    private Catalog catalog;
 
-    public Logo() {
-    }
-
-    public Logo(String name, Short width, Short height) {
-        this.name = name;
-        this.width = width;
-        this.height = height;
-    }
-
-    public Logo(String name, String url, Short width, Short height, Theme theme) {
+    public File(String name, String url, Long size, Catalog catalog) {
         this.name = name;
         this.url = url;
-        this.width = width;
-        this.height = height;
-        this.theme = theme;
+        this.size = size;
+        this.catalog = catalog;
+    }
+
+    public File() {
     }
 
     public UUID getId() {
@@ -124,20 +107,12 @@ public class Logo {
         this.url = url;
     }
 
-    public Short getWidth() {
-        return width;
+    public Long getSize() {
+        return size;
     }
 
-    public void setWidth(Short width) {
-        this.width = width;
-    }
-
-    public Short getHeight() {
-        return height;
-    }
-
-    public void setHeight(Short height) {
-        this.height = height;
+    public void setSize(Long size) {
+        this.size = size;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -148,35 +123,35 @@ public class Logo {
         this.createdAt = createdAt;
     }
 
-    public Theme getTheme() {
-        return theme;
+    public Catalog getCatalog() {
+        return catalog;
     }
 
-    public void setTheme(Theme theme) {
-        this.theme = theme;
+    public void setCatalog(Catalog catalog) {
+        this.catalog = catalog;
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        Logo logo = (Logo) o;
-        return Objects.equals(id, logo.id) && Objects.equals(name, logo.name) && Objects.equals(url, logo.url) && Objects.equals(width, logo.width) && Objects.equals(height, logo.height) && Objects.equals(createdAt, logo.createdAt);
+        File file = (File) o;
+        return Objects.equals(id, file.id) && Objects.equals(name, file.name) && Objects.equals(url, file.url) && Objects.equals(size, file.size) && Objects.equals(createdAt, file.createdAt) && Objects.equals(catalog, file.catalog);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, url, width, height, createdAt);
+        return Objects.hash(id, name, url, size, createdAt, catalog);
     }
 
     @Override
     public String toString() {
-        return "Logo{" +
+        return "File{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", url='" + url + '\'' +
-                ", width=" + width +
-                ", height=" + height +
+                ", size=" + size +
                 ", createdAt=" + createdAt +
+                ", catalog=" + catalog +
                 '}';
     }
 }

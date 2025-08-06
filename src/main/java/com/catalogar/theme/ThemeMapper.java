@@ -1,18 +1,18 @@
 package com.catalogar.theme;
 
 import com.catalogar.common.dto.ApiResponse;
-import com.catalogar.logo.LogoDto;
-import com.catalogar.logo.LogoMapper;
+import com.catalogar.image.ImageDto;
+import com.catalogar.image.ImageMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Component
 public class ThemeMapper {
-    private final LogoMapper logoMapper;
+    private final ImageMapper imageMapper;
 
-    public ThemeMapper(LogoMapper logoMapper) {
-        this.logoMapper = logoMapper;
+    public ThemeMapper(ImageMapper imageMapper) {
+        this.imageMapper = imageMapper;
     }
 
     public Theme toTheme(ThemeRequest request) {
@@ -27,14 +27,14 @@ public class ThemeMapper {
     }
 
     public ThemeDto toDto(Theme theme) {
-        LogoDto logo = Optional.ofNullable(theme.getLogo())
-                .map(logoMapper::toDto)
+        ImageDto image = Optional.ofNullable(theme.getLogo())
+                .map(imageMapper::toDto)
                 .orElse(null);
 
         return new ThemeDto(
                 theme.getPrimaryColor(),
                 theme.getSecondaryColor(),
-                logo
+                image
         );
     }
 }
