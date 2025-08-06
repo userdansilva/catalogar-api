@@ -1,13 +1,13 @@
 package com.catalogar.catalogItem;
 
 import com.catalogar.catalog.Catalog;
+import com.catalogar.catalogItemImage.CatalogItemImage;
+import com.catalogar.catalogItemImage.CatalogItemImageRequest;
 import com.catalogar.category.Category;
 import com.catalogar.category.CategoryService;
 import com.catalogar.common.exception.BadRequestException;
 import com.catalogar.common.exception.ResourceNotFoundException;
 import com.catalogar.common.message.MessageService;
-import com.catalogar.image.Image;
-import com.catalogar.image.ImageRequest;
 import com.catalogar.productType.ProductType;
 import com.catalogar.productType.ProductTypeService;
 import com.catalogar.storage.StorageService;
@@ -92,27 +92,27 @@ public class CatalogItemService {
         catalogItem.setDisabledAt(disabledAt);
         catalogItem.setCatalog(catalog);
 
-        List<Image> images = toImages(request.images(), catalogItem);
+        List<CatalogItemImage> images = toCatalogItemImages(request.images(), catalogItem, catalog);
         catalogItem.setImages(images);
 
         return catalogItemRepository.save(catalogItem);
     }
 
-    private void validateImages(List<ImageRequest> images) {
+    private void validateImages(List<CatalogItemImageRequest> images) {
         List<String> imageNames = images.stream()
-                .map(ImageRequest::fileName)
+                .map(CatalogItemImageRequest::fileName)
                 .toList();
 
         validateUnique(imageNames);
 
         List<Integer> imagePositions = images.stream()
-                .map(ImageRequest::position)
+                .map(CatalogItemImageRequest::position)
                 .toList();
 
         validateImagePositionSequenceAndOrder(imagePositions);
 
         List<String> imageUrls = images.stream()
-                .map(ImageRequest::fileUrl)
+                .map(CatalogItemImageRequest::url)
                 .toList();
 
         validateImageUrls(imageUrls);
@@ -200,14 +200,32 @@ public class CatalogItemService {
                 ));
     }
 
-    private List<Image> toImages(List<ImageRequest> imageRequests, CatalogItem catalogItem) {
+    private List<CatalogItemImage> toCatalogItemImages(
+            List<CatalogItemImageRequest> imageRequests,
+            CatalogItem catalogItem,
+            Catalog catalog
+    ) {
         return imageRequests.stream()
                 .map((imageRequest -> {
                     String name = imageRequest.fileName();
-                    String url = imageRequest.fileUrl();
-                    Short position = (short) imageRequest.position();
+                    String url = imageRequest.url();
+                    Long size = (long) imageRequest.sizeInBytes();
+                    short width = (short) imageRequest.width();
+                    short height = (short) imageRequest.height();
+                    String altText = imageRequest.altText();
+                    short position = (short) imageRequest.position();
 
-                    return new Image(name, url, position, catalogItem);
+                    return new CatalogItemImage(
+                            name,
+                            url,
+                            size,
+                            catalog,
+                            width,
+                            height,
+                            altText,
+                            position,
+                            catalogItem
+                    );
                 }))
                 .toList();
     }
@@ -251,10 +269,10 @@ public class CatalogItemService {
         catalogItem.setCategories(categories);
         catalogItem.setDisabledAt(disabledAt);
 
-        List<Image> images = toImages(request.images(), catalogItem);
+        List<CatalogItemImage> images = toCatalogItemImages(request.images(), catalogItem, catalog);
 
-        List<Image> newImages = images.stream().map(newImage -> {
-            Optional<Image> existingImage = catalogItem.getImages().stream()
+        List<CatalogItemImage> newImages = images.stream().map(newImage -> {
+            Optional<CatalogItemImage> existingImage = catalogItem.getImages().stream()
                     .filter(image -> newImage.getUrl().equals(image.getUrl()))
                     .findFirst();
 
