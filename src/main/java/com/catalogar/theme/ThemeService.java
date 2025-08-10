@@ -88,9 +88,9 @@ public class ThemeService {
         ImageRequest logoRequest = request.logo();
 
         if (logoRequest != null) {
-            validateImage(request.logo());
+            validateImage(logoRequest);
 
-            boolean isNewImage = !theme.getLogo().getUrl()
+            boolean isNewImage = theme.getLogo() == null || !theme.getLogo().getUrl()
                     .equals(logoRequest.url());
 
             if (isNewImage) {
