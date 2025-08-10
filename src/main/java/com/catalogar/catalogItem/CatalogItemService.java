@@ -154,20 +154,9 @@ public class CatalogItemService {
         }
     }
 
-    private void validateImageUrls(List<String> imageUrls) {
-        String blobUrl = storageService.getBlobUrl();
-
-        // Add mais URLs válida caso necessário (duplicado)
-        List<String> validUrls = List.of(blobUrl);
-
-        for (String imageUrl : imageUrls) {
-            boolean isValid = validUrls.stream().anyMatch(imageUrl::startsWith);
-
-            if (!isValid) {
-                throw new BadRequestException(
-                        messageService.getMessage("error.image.invalid_url")
-                );
-            }
+    private void validateImageUrls(List<String> Urls) {
+        for (String url : Urls) {
+            storageService.validateUrl(url);
         }
     }
 
