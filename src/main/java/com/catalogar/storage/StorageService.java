@@ -7,10 +7,13 @@ import com.azure.storage.blob.sas.BlobSasPermission;
 import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
 import com.azure.storage.blob.specialized.BlockBlobClient;
 import com.azure.storage.common.sas.SasProtocol;
+import com.catalogar.common.exception.BadRequestException;
+import com.catalogar.common.message.MessageService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -18,17 +21,20 @@ public class StorageService {
     private final String azureCustomUrl;
     private final BlobServiceClient blobServiceClient;
     private final String containerName;
+    private final MessageService messageService;
 
     public StorageService(
             @Value("${azure.storage.custom-url}") String azureCustomUrl,
             @Value("${azure.storage.connection-string}") String connectionString,
-            @Value("${azure.storage.container-name}") String containerName
+            @Value("${azure.storage.container-name}") String containerName,
+            MessageService messageService
     ) {
         this.azureCustomUrl = azureCustomUrl;
         this.blobServiceClient = new BlobServiceClientBuilder()
                 .connectionString(connectionString)
                 .buildClient();
         this.containerName = containerName;
+        this.messageService = messageService;
     }
 
     public Storage generateSasToken(StorageRequest request) {
@@ -73,6 +79,20 @@ public class StorageService {
 
             default -> ".webp";
         };
+    }
+
+    public void validateUrl(String url) {
+        String blobUrl = this.getBlobUrl();
+
+        List<String> validUrls = List.of(blobUrl);
+
+        boolean isValid = validUrls.stream().anyMatch(url::startsWith);
+
+        if (!isValid) {
+            throw new BadRequestException(
+                    messageService.getMessage("error.image.invalid_url")
+            );
+        }
     }
 
     public String getBlobUrl() {
