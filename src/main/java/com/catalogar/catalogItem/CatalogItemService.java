@@ -253,6 +253,7 @@ public class CatalogItemService {
 
         catalogItem.setTitle(request.title());
         catalogItem.setPrice(request.price());
+        catalogItem.setCaption(request.caption());
         catalogItem.setProductType(productType);
         catalogItem.setCategories(categories);
         catalogItem.setDisabledAt(disabledAt);
