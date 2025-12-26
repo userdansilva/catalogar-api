@@ -61,9 +61,9 @@ public class CatalogService {
     }
 
     private void validate(Catalog catalog, UpdateCatalogRequest request) {
-        boolean hasSlug = catalog.getSlug() != null && !catalog.getSlug().isEmpty();
+        boolean hasSlug = request.slug() != null && !request.slug().isEmpty();
 
-        if (catalog.isPublished() && !hasSlug) {
+        if (request.isPublished() && !hasSlug) {
             throw new BadRequestException(messageService
                     .getMessage("error.catalog.is_published_without_slug"));
         }
